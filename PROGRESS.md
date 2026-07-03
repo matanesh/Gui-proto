@@ -1,6 +1,6 @@
 # PROGRESS — Ops Command Center
 
-**NEXT STEP: 8 — Scaffold Vite + React + TS**
+**NEXT STEP: 10 — Router + app shell**
 
 Rules: after each completed step, mark it `[x]`, add a note (what was done, files changed), update NEXT STEP above, and `git commit`. Never redo completed steps. When step 17 passes, write `DONE` on the first line of this file.
 
@@ -20,8 +20,8 @@ Rules: after each completed step, mark it `[x]`, add a note (what was done, file
 - [x] 7. docs/CODE_REVIEW_CHECKLIST.md — 7 review sections as checkable assertions
 
 ### Phase 2 — Frontend prototype
-- [ ] 8. Scaffold Vite + React + TS at repo root (manual scaffold, npm install)
-- [ ] 9. Tailwind CSS v4 (@tailwindcss/vite) + shadcn/ui components + dark enterprise theme
+- [x] 8. Scaffold Vite + React + TS at root — manual scaffold (package.json, vite.config.ts, tsconfigs, index.html, src/main.tsx), npm install OK, build OK. Note: themed index.css landed here too.
+- [x] 9. Tailwind v4 via @tailwindcss/vite + dark mission-control theme tokens; hand-written shadcn-style primitives in src/components/ui (button, card, badge, tabs, table, input, select, switch, label, progress, skeleton, separator, tooltip, dialog, sonner); cn + format utils in src/lib/utils.ts
 - [ ] 10. React Router + app shell (sidebar, header, layout) + folder structure
 - [ ] 11. Typed models in src/models/
 - [ ] 12. Mock service layer in src/services/ (apiClient, commandsApi, runsApi, healthApi, mockData)

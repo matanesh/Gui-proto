@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+/*
+ * Ops Command Center — dark enterprise mission-control theme.
+ * shadcn/ui-compatible design tokens (dark-only: the app ships in dark mode).
+ */
+
+@custom-variant dark (&:is(.dark *));
+
+:root,
+.dark {
+  /* Surfaces */
+  --background: oklch(0.145 0.015 260);
+  --foreground: oklch(0.93 0.01 250);
+  --card: oklch(0.185 0.017 260);
+  --card-foreground: oklch(0.93 0.01 250);
+  --popover: oklch(0.185 0.017 260);
+  --popover-foreground: oklch(0.93 0.01 250);
+
+  /* Accents — blue/cyan */
+  --primary: oklch(0.68 0.16 240);
+  --primary-foreground: oklch(0.13 0.02 260);
+  --secondary: oklch(0.24 0.02 260);
+  --secondary-foreground: oklch(0.93 0.01 250);
+  --muted: oklch(0.23 0.018 260);
+  --muted-foreground: oklch(0.65 0.015 255);
+  --accent: oklch(0.26 0.03 245);
+  --accent-foreground: oklch(0.93 0.01 250);
+  --destructive: oklch(0.6 0.21 25);
+  --destructive-foreground: oklch(0.97 0.01 250);
+
+  --border: oklch(0.28 0.02 260);
+  --input: oklch(0.28 0.02 260);
+  --ring: oklch(0.68 0.16 240);
+
+  --radius: 0.5rem;
+
+  /* Status palette */
+  --status-success: oklch(0.72 0.17 160);
+  --status-running: oklch(0.7 0.15 240);
+  --status-warning: oklch(0.8 0.16 80);
+  --status-error: oklch(0.63 0.21 25);
+  --status-neutral: oklch(0.6 0.02 255);
+  --status-accepted: oklch(0.68 0.16 300);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-status-success: var(--status-success);
+  --color-status-running: var(--status-running);
+  --color-status-warning: var(--status-warning);
+  --color-status-error: var(--status-error);
+  --color-status-neutral: var(--status-neutral);
+  --color-status-accepted: var(--status-accepted);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 5px;
+  }
+}
