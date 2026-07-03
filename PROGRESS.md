@@ -1,6 +1,6 @@
 # PROGRESS — Ops Command Center
 
-**NEXT STEP: 4 — docs/EVENT_SCHEMA.md**
+**NEXT STEP: 5 — docs/GUI_SPEC.md**
 
 Rules: after each completed step, mark it `[x]`, add a note (what was done, files changed), update NEXT STEP above, and `git commit`. Never redo completed steps. When step 17 passes, write `DONE` on the first line of this file.
 
@@ -14,7 +14,7 @@ Rules: after each completed step, mark it `[x]`, add a note (what was done, file
 - [x] 1. docs/HLD.md — full HLD with Mermaid diagrams (architecture, command flow, event flow, run lifecycle)
 - [x] 2. docs/ADR.md — ADR-001…ADR-010, full Context/Decision/Alternatives/Rationale/Tradeoffs/Consequences/Revisit structure
 - [x] 3. docs/API_CONTRACT.md — all 7 endpoints, examples, error/pagination/idempotency models, status code guidance
-- [ ] 4. docs/EVENT_SCHEMA.md
+- [x] 4. docs/EVENT_SCHEMA.md — RunEvent envelope, 11 types, 5 severities, ordering/dedup/replay/reconnect/gap/flood handling, JSON examples
 - [ ] 5. docs/GUI_SPEC.md
 - [ ] 6. docs/FAILURE_MODES.md
 - [ ] 7. docs/CODE_REVIEW_CHECKLIST.md
