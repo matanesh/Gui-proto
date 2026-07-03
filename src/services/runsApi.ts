@@ -11,11 +11,18 @@ import {
   COMMAND_DEFINITIONS,
   getAllRuns,
   getRun,
+  getRequestPayload,
   lookupClientRequest,
   putRun,
   rememberClientRequest,
+  rememberRequestPayload,
   updateRun,
 } from "./mockData";
+
+/** Returns the original submission payload for session-launched runs (mock-only helper). */
+export async function fetchRunRequestPayload(runId: string): Promise<unknown> {
+  return simulateRequest(() => getRequestPayload(runId) ?? null, { failRate: 0 });
+}
 
 /**
  * Mirrors POST /api/commands/{commandId}/runs — the 202 Accepted pattern.
@@ -69,6 +76,12 @@ export async function submitCommand(request: CommandRequest): Promise<CommandAck
       };
       putRun(run);
       rememberClientRequest(request.clientRequestId, runId);
+      rememberRequestPayload(runId, {
+        commandId: request.commandId,
+        parameters: request.parameters,
+        requestedBy: request.requestedBy,
+        clientRequestId: request.clientRequestId,
+      });
 
       return {
         runId,

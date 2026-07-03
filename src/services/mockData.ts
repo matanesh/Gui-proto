@@ -312,6 +312,17 @@ for (const run of seededHistory()) {
 /** Idempotency ledger: clientRequestId -> runId (see docs/API_CONTRACT.md). */
 const idempotencyLedger = new Map<string, string>();
 
+/** Original submission payloads for runs launched this session (Request Payload tab). */
+const requestPayloads = new Map<string, unknown>();
+
+export function rememberRequestPayload(runId: string, payload: unknown): void {
+  requestPayloads.set(runId, payload);
+}
+
+export function getRequestPayload(runId: string): unknown {
+  return requestPayloads.get(runId);
+}
+
 export function getAllRuns(): Run[] {
   return [...runStore.values()].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
