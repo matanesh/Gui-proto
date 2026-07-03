@@ -1,6 +1,6 @@
 # PROGRESS — Ops Command Center
 
-**NEXT STEP: 1 — docs/HLD.md**
+**NEXT STEP: 2 — docs/ADR.md**
 
 Rules: after each completed step, mark it `[x]`, add a note (what was done, files changed), update NEXT STEP above, and `git commit`. Never redo completed steps. When step 17 passes, write `DONE` on the first line of this file.
 
@@ -11,7 +11,7 @@ Rules: after each completed step, mark it `[x]`, add a note (what was done, file
   - Note: repo initialized on branch `main`; CLAUDE.md now points to the real handoff files.
 
 ### Phase 1 — Documentation
-- [ ] 1. docs/HLD.md
+- [x] 1. docs/HLD.md — full HLD with Mermaid diagrams (architecture, command flow, event flow, run lifecycle)
 - [ ] 2. docs/ADR.md (ADR-001…ADR-010)
 - [ ] 3. docs/API_CONTRACT.md
 - [ ] 4. docs/EVENT_SCHEMA.md
