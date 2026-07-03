@@ -1,6 +1,6 @@
 # PROGRESS — Ops Command Center
 
-**NEXT STEP: 5 — docs/GUI_SPEC.md**
+**NEXT STEP: 6 — docs/FAILURE_MODES.md**
 
 Rules: after each completed step, mark it `[x]`, add a note (what was done, files changed), update NEXT STEP above, and `git commit`. Never redo completed steps. When step 17 passes, write `DONE` on the first line of this file.
 
@@ -15,7 +15,7 @@ Rules: after each completed step, mark it `[x]`, add a note (what was done, file
 - [x] 2. docs/ADR.md — ADR-001…ADR-010, full Context/Decision/Alternatives/Rationale/Tradeoffs/Consequences/Revisit structure
 - [x] 3. docs/API_CONTRACT.md — all 7 endpoints, examples, error/pagination/idempotency models, status code guidance
 - [x] 4. docs/EVENT_SCHEMA.md — RunEvent envelope, 11 types, 5 severities, ordering/dedup/replay/reconnect/gap/flood handling, JSON examples
-- [ ] 5. docs/GUI_SPEC.md
+- [x] 5. docs/GUI_SPEC.md — UX principles, IA, 6 screens, component inventory, states, responsive/a11y, mock data rules
 - [ ] 6. docs/FAILURE_MODES.md
 - [ ] 7. docs/CODE_REVIEW_CHECKLIST.md
 
