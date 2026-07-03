@@ -1,6 +1,6 @@
 # PROGRESS — Ops Command Center
 
-**NEXT STEP: 12 — Mock service layer**
+**NEXT STEP: 13 — TanStack Query hooks**
 
 Rules: after each completed step, mark it `[x]`, add a note (what was done, files changed), update NEXT STEP above, and `git commit`. Never redo completed steps. When step 17 passes, write `DONE` on the first line of this file.
 
@@ -24,7 +24,7 @@ Rules: after each completed step, mark it `[x]`, add a note (what was done, file
 - [x] 9. Tailwind v4 via @tailwindcss/vite + dark mission-control theme tokens; hand-written shadcn-style primitives in src/components/ui (button, card, badge, tabs, table, input, select, switch, label, progress, skeleton, separator, tooltip, dialog, sonner); cn + format utils in src/lib/utils.ts
 - [x] 10. Router + app shell — createBrowserRouter with 6 routes, AppShell/Sidebar/TopHeader/PageHeader, page stubs per feature. Note: Zustand uiStore.ts created here (sidebar state needed it) — step 13 covers Query wiring only.
 - [x] 11. Typed models — src/models/{run,command,event,health,sse,index}.ts, strict unions + envelopes per docs
-- [ ] 12. Mock service layer in src/services/ (apiClient, commandsApi, runsApi, healthApi, mockData)
+- [x] 12. Mock service layer — apiClient (latency+failure sim, ApiError), mockData (6 commands, seeded 42-run history, in-memory run store, idempotency ledger, health fixtures), commandsApi, runsApi (202+runId, filters, snapshot, cancel), healthApi
 - [ ] 13. TanStack Query provider + hooks; Zustand uiStore
 - [ ] 14. Mock SSE (eventStreamClient.ts, useRunEvents, useSseConnection)
 - [ ] 15a. Screen: Dashboard (/)
