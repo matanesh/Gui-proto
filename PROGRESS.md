@@ -37,3 +37,7 @@ Rules: after each completed step, mark it `[x]`, add a note (what was done, file
 - [x] 15f. System Health — 5 component cards (status accent, latency, last-checked) with degraded banner, broker/stream metric cards, health-check timeline; auto-refresh via uiStore interval
 - [x] 16. README.md at root — what it is/isnt, stack, run instructions, folder structure, docs index, architecture assumptions, mock REST/SSE explanation, how to connect real FastAPI/SSE, design rationale, sanitization notes
 - [x] 17. Verify — npm run build (tsc -b + vite build) passes clean; dev server boots and serves HTTP 200 with correct title. Chunk-size note is an advisory warning only. DONE written to top of PROGRESS.md.
+
+## Post-completion polish (after DONE)
+- Route-level code splitting: pages lazy-loaded in src/app/router.tsx with a Suspense fallback in AppShell. Main chunk 558 kB → 393 kB; per-screen chunks load on demand; chunk-size build warning resolved.
+- Added catch-all 404 route (src/features/misc/NotFoundPage.tsx) for unknown URLs.

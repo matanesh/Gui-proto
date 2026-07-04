@@ -1,11 +1,30 @@
+import { lazy } from "react";
 import { createBrowserRouter } from "react-router-dom";
 import { AppShell } from "@/components/layout/AppShell";
-import { DashboardPage } from "@/features/dashboard/DashboardPage";
-import { CommandLauncherPage } from "@/features/commands/CommandLauncherPage";
-import { RunsHistoryPage } from "@/features/runs/RunsHistoryPage";
-import { RunDetailsPage } from "@/features/runs/RunDetailsPage";
-import { SystemHealthPage } from "@/features/health/SystemHealthPage";
-import { ConfigurationPage } from "@/features/configuration/ConfigurationPage";
+
+// Route-level code splitting: each screen is its own chunk, so the initial
+// bundle stays small and screens load on demand.
+const DashboardPage = lazy(() =>
+  import("@/features/dashboard/DashboardPage").then((m) => ({ default: m.DashboardPage })),
+);
+const CommandLauncherPage = lazy(() =>
+  import("@/features/commands/CommandLauncherPage").then((m) => ({ default: m.CommandLauncherPage })),
+);
+const RunsHistoryPage = lazy(() =>
+  import("@/features/runs/RunsHistoryPage").then((m) => ({ default: m.RunsHistoryPage })),
+);
+const RunDetailsPage = lazy(() =>
+  import("@/features/runs/RunDetailsPage").then((m) => ({ default: m.RunDetailsPage })),
+);
+const SystemHealthPage = lazy(() =>
+  import("@/features/health/SystemHealthPage").then((m) => ({ default: m.SystemHealthPage })),
+);
+const ConfigurationPage = lazy(() =>
+  import("@/features/configuration/ConfigurationPage").then((m) => ({ default: m.ConfigurationPage })),
+);
+const NotFoundPage = lazy(() =>
+  import("@/features/misc/NotFoundPage").then((m) => ({ default: m.NotFoundPage })),
+);
 
 export const router = createBrowserRouter([
   {
@@ -17,6 +36,7 @@ export const router = createBrowserRouter([
       { path: "/runs/:runId", element: <RunDetailsPage /> },
       { path: "/health", element: <SystemHealthPage /> },
       { path: "/config", element: <ConfigurationPage /> },
+      { path: "*", element: <NotFoundPage /> },
     ],
   },
 ]);
