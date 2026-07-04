@@ -1,6 +1,6 @@
 # PROGRESS — Ops Command Center
 
-**NEXT STEP: 16 — README.md**
+**NEXT STEP: 17 — Verify (build/typecheck), fix, finalize DONE**
 
 Rules: after each completed step, mark it `[x]`, add a note (what was done, files changed), update NEXT STEP above, and `git commit`. Never redo completed steps. When step 17 passes, write `DONE` on the first line of this file.
 
@@ -33,5 +33,5 @@ Rules: after each completed step, mark it `[x]`, add a note (what was done, file
 - [x] 15d. Runs History — RunsFilterBar (status toggles, command, date range, runId search), sortable columns (created/duration/status), server-driven pagination, loading/empty/error states; filters persisted in uiStore
 - [x] 15e. Configuration — placeholder API base URL + SSE path (read-only, sanitization note), feature flags (activity feed, log auto-follow), display prefs (health refresh interval, severity floor, max rendered events); all wired to persisted uiStore
 - [x] 15f. System Health — 5 component cards (status accent, latency, last-checked) with degraded banner, broker/stream metric cards, health-check timeline; auto-refresh via uiStore interval
-- [ ] 16. README.md at root
+- [x] 16. README.md at root — what it is/isnt, stack, run instructions, folder structure, docs index, architecture assumptions, mock REST/SSE explanation, how to connect real FastAPI/SSE, design rationale, sanitization notes
 - [ ] 17. Verify: npm run build + tsc --noEmit clean, dev server smoke test, fix issues, final commit, write DONE
