@@ -1,8 +1,6 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Clock,
-  Crosshair,
   Gauge,
   ListChecks,
   Play,
@@ -20,9 +18,6 @@ import { EmptyState } from "@/components/shared/EmptyState";
 import { ErrorState } from "@/components/shared/ErrorState";
 import { HealthIndicator, COMPONENT_LABELS } from "@/components/shared/HealthIndicator";
 import { ActivityFeed } from "./ActivityFeed";
-import { CommandConsole } from "@/features/fleet/CommandConsole";
-import { CommandResultWindow } from "@/features/fleet/CommandResultWindow";
-import type { ResolvedTarget } from "@/features/fleet/targets";
 import { useRunsList } from "@/hooks/useRuns";
 import { useHealth } from "@/hooks/useHealth";
 import { useUiStore } from "@/store/uiStore";
@@ -32,7 +27,6 @@ export function DashboardPage() {
   const runsQuery = useRunsList({ page: 1, pageSize: 50 });
   const healthQuery = useHealth();
   const activityFeedEnabled = useUiStore((s) => s.dashboardActivityFeedEnabled);
-  const [activeCommand, setActiveCommand] = useState<{ runId: string; target: ResolvedTarget } | null>(null);
 
   const runs = runsQuery.data?.items ?? [];
   const dayAgo = Date.now() - 24 * 3600 * 1000;
@@ -90,19 +84,6 @@ export function DashboardPage() {
               ))
             )}
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Command console */}
-      <Card className="mb-6">
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-base">
-            <Crosshair className="h-4 w-4 text-primary" />
-            Command Console
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <CommandConsole onLaunched={(runId, target) => setActiveCommand({ runId, target })} />
         </CardContent>
       </Card>
 
@@ -169,14 +150,6 @@ export function DashboardPage() {
 
         {activityFeedEnabled && <ActivityFeed runs={runs} />}
       </div>
-
-      {activeCommand && (
-        <CommandResultWindow
-          runId={activeCommand.runId}
-          target={activeCommand.target}
-          onClose={() => setActiveCommand(null)}
-        />
-      )}
     </div>
   );
 }

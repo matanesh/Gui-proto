@@ -8,8 +8,8 @@ import { AppShell } from "@/components/layout/AppShell";
 const DashboardPage = lazy(() =>
   import("@/features/dashboard/DashboardPage").then((m) => ({ default: m.DashboardPage })),
 );
-const CommandLauncherPage = lazy(() =>
-  import("@/features/commands/CommandLauncherPage").then((m) => ({ default: m.CommandLauncherPage })),
+const CommandConsolePage = lazy(() =>
+  import("@/features/commands/CommandConsolePage").then((m) => ({ default: m.CommandConsolePage })),
 );
 const RunsHistoryPage = lazy(() =>
   import("@/features/runs/RunsHistoryPage").then((m) => ({ default: m.RunsHistoryPage })),
@@ -35,7 +35,7 @@ export const router = createBrowserRouter([
     element: <AppShell />,
     children: [
       { path: "/", element: <DashboardPage /> },
-      { path: "/commands", element: <CommandLauncherPage /> },
+      { path: "/commands", element: <CommandConsolePage /> },
       { path: "/runs", element: <RunsHistoryPage /> },
       { path: "/runs/:runId", element: <RunDetailsPage /> },
       { path: "/map", element: <FleetMapPage /> },

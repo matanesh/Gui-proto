@@ -17,6 +17,8 @@ interface DynamicCommandFormProps {
   command: CommandDefinition;
   submitting: boolean;
   onSubmit: (parameters: CommandParameters) => void;
+  /** Override the submit button label (default: "Launch <command>"). */
+  submitLabel?: string;
 }
 
 type FieldErrors = Record<string, string>;
@@ -35,7 +37,12 @@ function defaultsFor(command: CommandDefinition): CommandParameters {
   return values;
 }
 
-export function DynamicCommandForm({ command, submitting, onSubmit }: DynamicCommandFormProps) {
+export function DynamicCommandForm({
+  command,
+  submitting,
+  onSubmit,
+  submitLabel,
+}: DynamicCommandFormProps) {
   const initialValues = useMemo(() => defaultsFor(command), [command]);
   const [values, setValues] = useState<CommandParameters>(initialValues);
   const [errors, setErrors] = useState<FieldErrors>({});
@@ -148,7 +155,7 @@ export function DynamicCommandForm({ command, submitting, onSubmit }: DynamicCom
 
       <Button type="submit" className="w-full" disabled={submitting || !command.enabled}>
         {submitting ? <Loader2 className="animate-spin" /> : <Rocket />}
-        {submitting ? "Submitting…" : `Launch ${command.name}`}
+        {submitting ? "Submitting…" : (submitLabel ?? `Launch ${command.name}`)}
       </Button>
     </form>
   );

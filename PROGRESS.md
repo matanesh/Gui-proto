@@ -69,3 +69,16 @@ Rules: after each completed step, mark it `[x]`, add a note (what was done, file
 - Files: src/features/fleet/{CommandConsole,CommandResultWindow,TargetMap,targets}.tsx,
   src/features/commands/defaults.ts; edits to MapView, FleetMapPage, PcDetailsPanel,
   SendCommandDialog, DashboardPage, models, fleetApi, mockData, runsApi.
+
+## Rework: dedicated Command Console screen + dockable map (added after DONE)
+- Removed the command console from the main Dashboard (Dashboard = generic data only).
+- /commands is now the Command Console: target field (IP/name/id) + command dropdown
+  + full parameter form (DynamicCommandForm, submitLabel="Send command"); below it a
+  result panel (status + progress bar + parsed logs via LogViewer) on the left and a
+  map on the right.
+- DockableMap: docked to the right by default (resizable via left-edge drag), with a
+  Float button -> movable react-rnd window, and Dock button back.
+- Reused useRun + useRunEvents to drive live result; TargetMap for the location.
+- Removed old CommandLauncherPage (catalog browse); DynamicCommandForm gained submitLabel.
+- Files: src/features/commands/{CommandConsolePage,CommandResultPanel}.tsx,
+  src/features/fleet/DockableMap.tsx; edits to router, DynamicCommandForm, DashboardPage.
