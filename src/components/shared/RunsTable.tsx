@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -12,12 +13,48 @@ import { StatusBadge } from "./StatusBadge";
 import { formatDuration, relativeTime } from "@/lib/utils";
 import type { Run } from "@/models";
 
+export type RunsSortKey = "createdAt" | "durationSec" | "status";
+export type SortDirection = "asc" | "desc";
+
 interface RunsTableProps {
   runs: Run[];
   compact?: boolean;
+  sortKey?: RunsSortKey;
+  sortDir?: SortDirection;
+  onSortChange?: (key: RunsSortKey) => void;
 }
 
-export function RunsTable({ runs, compact = false }: RunsTableProps) {
+function SortableHead({
+  label,
+  columnKey,
+  sortKey,
+  sortDir,
+  onSortChange,
+}: {
+  label: string;
+  columnKey: RunsSortKey;
+  sortKey?: RunsSortKey;
+  sortDir?: SortDirection;
+  onSortChange?: (key: RunsSortKey) => void;
+}) {
+  if (!onSortChange) return <TableHead>{label}</TableHead>;
+  const active = sortKey === columnKey;
+  const Icon = !active ? ArrowUpDown : sortDir === "asc" ? ArrowUp : ArrowDown;
+  return (
+    <TableHead>
+      <button
+        type="button"
+        className="inline-flex items-center gap-1 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+        onClick={() => onSortChange(columnKey)}
+      >
+        {label}
+        <Icon className="h-3 w-3" />
+      </button>
+    </TableHead>
+  );
+}
+
+export function RunsTable({ runs, compact = false, sortKey, sortDir, onSortChange }: RunsTableProps) {
   const navigate = useNavigate();
 
   return (
@@ -26,10 +63,28 @@ export function RunsTable({ runs, compact = false }: RunsTableProps) {
         <TableRow>
           <TableHead>Run ID</TableHead>
           <TableHead>Command</TableHead>
-          <TableHead>Status</TableHead>
+          <SortableHead
+            label="Status"
+            columnKey="status"
+            sortKey={sortKey}
+            sortDir={sortDir}
+            onSortChange={onSortChange}
+          />
           {!compact && <TableHead className="w-32">Progress</TableHead>}
-          <TableHead>Created</TableHead>
-          <TableHead>Duration</TableHead>
+          <SortableHead
+            label="Created"
+            columnKey="createdAt"
+            sortKey={sortKey}
+            sortDir={sortDir}
+            onSortChange={onSortChange}
+          />
+          <SortableHead
+            label="Duration"
+            columnKey="durationSec"
+            sortKey={sortKey}
+            sortDir={sortDir}
+            onSortChange={onSortChange}
+          />
           {!compact && <TableHead>Requested by</TableHead>}
         </TableRow>
       </TableHeader>

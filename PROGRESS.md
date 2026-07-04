@@ -1,6 +1,6 @@
 # PROGRESS — Ops Command Center
 
-**NEXT STEP: 15d — Runs History screen**
+**NEXT STEP: 15e — Configuration screen**
 
 Rules: after each completed step, mark it `[x]`, add a note (what was done, files changed), update NEXT STEP above, and `git commit`. Never redo completed steps. When step 17 passes, write `DONE` on the first line of this file.
 
@@ -30,7 +30,7 @@ Rules: after each completed step, mark it `[x]`, add a note (what was done, file
 - [x] 15a. Dashboard — hero status strip, 6 metric cards, system status (4 components), recent runs table, live activity feed, CTA; shared components created (StatusBadge, RiskBadge, ConnectionPill, MetricCard, HealthIndicator, Empty/ErrorState, RunsTable)
 - [x] 15b. Command Launcher — catalog grouped by category, selectable cards, details panel (risk, est. duration), DynamicCommandForm (text/number/select/boolean, validation, a11y), 202 submit → toast → navigate to Run Details
 - [x] 15c. Run Details (flagship) — status header (badge, copyable runId, live progress, phases, timestamps), ConnectionPill, cancel/retry/export actions, 6 tabs (Overview/Timeline/Logs/Events/Payload/Diagnostics), RunTimeline + LogViewer (severity floor, auto-follow, export) + EventFeed; snapshot polling + payload store added to runsApi/mockData
-- [ ] 15d. Screen: Runs History (/runs)
+- [x] 15d. Runs History — RunsFilterBar (status toggles, command, date range, runId search), sortable columns (created/duration/status), server-driven pagination, loading/empty/error states; filters persisted in uiStore
 - [ ] 15e. Screen: Configuration (/config)
 - [ ] 15f. Screen: System Health (/health)
 - [ ] 16. README.md at root
