@@ -32,4 +32,5 @@ function Badge({ className, variant, ...props }: BadgeProps) {
   return <div className={cn(badgeVariants({ variant }), className)} {...props} />;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- shadcn pattern: component + its cva variants
 export { Badge, badgeVariants };

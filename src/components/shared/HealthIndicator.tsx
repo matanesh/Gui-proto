@@ -24,6 +24,7 @@ export function HealthIndicator({ status, className }: { status: ComponentStatus
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- shared label map co-located with its indicator
 export const COMPONENT_LABELS: Record<string, string> = {
   frontend: "Frontend",
   bff: "FastAPI BFF",

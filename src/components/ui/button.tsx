@@ -42,4 +42,5 @@ function Button({ className, variant, size, asChild = false, ...props }: ButtonP
   return <Comp className={cn(buttonVariants({ variant, size, className }))} {...props} />;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- shadcn pattern: component + its cva variants
 export { Button, buttonVariants };

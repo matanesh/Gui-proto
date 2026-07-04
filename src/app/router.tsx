@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components -- route module: mixes lazy route components with the router export by design */
 import { lazy } from "react";
 import { createBrowserRouter } from "react-router-dom";
 import { AppShell } from "@/components/layout/AppShell";

@@ -22,7 +22,7 @@ export function CommandLauncherPage() {
   const submitMutation = useSubmitCommand();
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  const commands = commandsQuery.data ?? [];
+  const commands = useMemo(() => commandsQuery.data ?? [], [commandsQuery.data]);
   const selected: CommandDefinition | null =
     commands.find((c) => c.id === selectedId) ?? commands[0] ?? null;
 

@@ -121,7 +121,7 @@ export async function fetchRuns(filter: RunsFilter = {}): Promise<RunsPage> {
 
     const [sortKey = "createdAt", sortDir = "desc"] = (filter.sort ?? "createdAt:desc").split(":");
     items = [...items].sort((a, b) => {
-      let cmp = 0;
+      let cmp: number;
       if (sortKey === "durationSec") {
         cmp = (a.durationSec ?? -1) - (b.durationSec ?? -1);
       } else if (sortKey === "status") {
