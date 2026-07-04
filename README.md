@@ -38,16 +38,63 @@ Rationale for each decision is recorded in [`docs/ADR.md`](docs/ADR.md).
 
 ---
 
-## Run locally
+## Running the app
 
 Requires Node.js 20+.
 
 ```bash
 npm install
-npm run dev      # start the Vite dev server (prints the local URL)
+npm run dev      # localhost only  → http://localhost:5173
 npm run build    # type-check (tsc -b) + production build to dist/
-npm run preview  # preview the production build
+npm run preview  # preview the production build (localhost)
+npm run lint     # ESLint (see "Linting" below)
 ```
+
+### Localhost vs. network / IP
+
+By default the dev server binds to **localhost** (only reachable from this
+machine). To reach it from another device on your network — a phone, a VM, a
+colleague's laptop — bind to all interfaces:
+
+```bash
+npm run dev:host          # binds 0.0.0.0; Vite prints the Network URL, e.g. http://192.168.1.42:5173
+npm run preview:host      # same, for the production build
+```
+
+You can also set host/port explicitly via environment variables (honored by
+`vite.config.ts`):
+
+```bash
+HOST=0.0.0.0 PORT=8080 npm run dev        # bind all interfaces on port 8080
+PORT=3000 npm run dev                     # localhost:3000
+npm run dev -- --host --port 8080         # equivalent one-off flags
+```
+
+To serve the built assets from any static host: `npm run build`, then serve the
+`dist/` folder (e.g. `npm run preview:host`, or any static file server / nginx).
+
+> Note: this is a frontend-only prototype with no backend — binding to the
+> network only exposes the static UI and its in-browser mocks, no real data.
+
+### System name (editable)
+
+The system name shown in the **boot animation**, the sidebar, and the browser
+tab is a single editable value. Set it without touching code by creating a
+`.env` (copy from [`.env.example`](.env.example)):
+
+```bash
+VITE_SYSTEM_NAME="Mission Control"
+```
+
+It falls back to `Ops Command Center` if unset. A short intro animation plays on
+entry (CSS-only, GPU-friendly, respects `prefers-reduced-motion`, and is
+skippable with any key/click).
+
+### Linting
+
+An MVP ESLint flat config ([`eslint.config.js`](eslint.config.js)) covers
+JS/TypeScript recommended rules, React hooks correctness, and the Vite
+fast-refresh guard. Run `npm run lint`; it currently reports **zero problems**.
 
 ---
 

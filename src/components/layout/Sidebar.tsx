@@ -11,6 +11,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useUiStore } from "@/store/uiStore";
+import { APP_NAME } from "@/config/app";
 
 const NAV_ITEMS = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard, end: true },
@@ -37,9 +38,7 @@ export function Sidebar() {
             <TerminalSquare className="h-4 w-4" />
           </div>
           {!collapsed && (
-            <span className="truncate text-sm font-semibold tracking-tight">
-              Ops Command Center
-            </span>
+            <span className="truncate text-sm font-semibold tracking-tight">{APP_NAME}</span>
           )}
         </div>
       </div>

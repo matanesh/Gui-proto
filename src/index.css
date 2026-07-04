@@ -99,3 +99,127 @@
     border-radius: 5px;
   }
 }
+
+/* ---------------------------------------------------------------------------
+ * Boot splash — one-shot entry animation (see components/intro/BootSplash.tsx).
+ * Only opacity/transform are animated to keep it cheap on real systems.
+ * ------------------------------------------------------------------------- */
+.boot-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(120% 120% at 50% 40%, oklch(0.2 0.03 260) 0%, var(--background) 60%);
+  animation: boot-splash-in 300ms ease-out both;
+  will-change: opacity;
+}
+.boot-splash--leaving {
+  opacity: 0;
+  transition: opacity 520ms ease-in;
+}
+.boot-splash__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+.boot-splash__glyph {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 0.5rem;
+}
+.boot-splash__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  border: 2px solid oklch(0.68 0.16 240 / 0.35);
+  border-top-color: var(--primary);
+  animation: boot-splash-spin 1s linear infinite;
+}
+.boot-splash__core {
+  position: absolute;
+  inset: 22px;
+  border-radius: 9999px;
+  background: var(--primary);
+  animation: boot-splash-pulse 1.4s ease-in-out infinite;
+}
+.boot-splash__title {
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  background: linear-gradient(90deg, oklch(0.85 0.02 250), var(--primary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  opacity: 0;
+  animation: boot-splash-rise 700ms ease-out 120ms both;
+  text-align: center;
+  padding: 0 1rem;
+}
+.boot-splash__subtitle {
+  font-size: 0.8rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  opacity: 0;
+  animation: boot-splash-rise 700ms ease-out 320ms both;
+}
+.boot-splash__bar {
+  margin-top: 0.5rem;
+  width: 180px;
+  height: 2px;
+  border-radius: 9999px;
+  background: var(--border);
+  overflow: hidden;
+}
+.boot-splash__bar > span {
+  display: block;
+  height: 100%;
+  width: 40%;
+  border-radius: inherit;
+  background: var(--primary);
+  animation: boot-splash-scan 1.2s ease-in-out infinite;
+}
+
+/* Reduced motion: no spin/scan/pulse, near-instant reveal. */
+.boot-splash--reduced,
+.boot-splash--reduced .boot-splash__title,
+.boot-splash--reduced .boot-splash__subtitle {
+  animation-duration: 1ms;
+}
+.boot-splash--reduced .boot-splash__ring,
+.boot-splash--reduced .boot-splash__core,
+.boot-splash--reduced .boot-splash__bar > span {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .boot-splash__ring,
+  .boot-splash__core,
+  .boot-splash__bar > span {
+    animation: none;
+  }
+}
+
+@keyframes boot-splash-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes boot-splash-rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes boot-splash-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes boot-splash-pulse {
+  0%, 100% { transform: scale(0.82); opacity: 0.7; }
+  50% { transform: scale(1); opacity: 1; }
+}
+@keyframes boot-splash-scan {
+  0% { transform: translateX(-120%); }
+  100% { transform: translateX(320%); }
+}
