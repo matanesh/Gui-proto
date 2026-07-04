@@ -1,10 +1,13 @@
-DONE
-
 # PROGRESS — Ops Command Center
 
-**NEXT STEP: none — all steps complete.**
+**NEXT STEP: B1 — backend scaffold (FastAPI BFF skeleton, config, requirements)**
 
-Rules: after each completed step, mark it `[x]`, add a note (what was done, files changed), update NEXT STEP above, and `git commit`. Never redo completed steps. When step 17 passes, write `DONE` on the first line of this file.
+> Phases 1 & 2 (docs + mock frontend) are COMPLETE (see checklist below).
+> **Phase 3 (bottom of file)** aligns the code with the HLD: a real FastAPI BFF
+> that talks to RabbitMQ and a Python Core, with SSE. The mock frontend keeps
+> working; the real path is behind an env flag. Work Phase 3 top-to-bottom.
+
+Rules: after each completed step, mark it `[x]`, add a note (what was done, files changed), update NEXT STEP above, and `git commit` + `git push`. Never redo completed steps. When Phase 3 passes, write `DONE` on the first line of this file.
 
 ## Checklist
 
@@ -82,3 +85,21 @@ Rules: after each completed step, mark it `[x]`, add a note (what was done, file
 - Removed old CommandLauncherPage (catalog browse); DynamicCommandForm gained submitLabel.
 - Files: src/features/commands/{CommandConsolePage,CommandResultPanel}.tsx,
   src/features/fleet/DockableMap.tsx; edits to router, DynamicCommandForm, DashboardPage.
+
+## Phase 3 — Real backend, HLD alignment (in progress)
+
+Goal: React → REST → FastAPI BFF → RabbitMQ → Python Core; Core → RabbitMQ → BFF → SSE → React.
+The BFF must also run standalone (no broker) via an internal simulator, so it's demoable without RabbitMQ.
+Everything sanitized. Frontend stays mock by default; real mode via env flag. Commit + push after each step.
+
+- [ ] B1. Backend scaffold: backend/ (requirements.txt, app package, config from env, FastAPI app, uvicorn entry, README, .env.example).
+- [ ] B2. Pydantic models mirroring docs/API_CONTRACT.md + docs/EVENT_SCHEMA.md (Command, CommandField, Run, RunEvent, Health).
+- [ ] B3. In-memory run store + sanitized command catalog (mirrors frontend mock) so the BFF works without Core.
+- [ ] B4. REST endpoints per API_CONTRACT: GET /api/commands; POST /api/commands/{id}/runs (202+runId, clientRequestId idempotency); GET /api/runs (filters+pagination); GET /api/runs/{runId}; POST /api/runs/{runId}/cancel; GET /api/health.
+- [ ] B5. SSE: in-process async event bus + GET /api/events/stream?runId= (text/event-stream, heartbeats, Last-Event-ID). Internal simulator drives run lifecycle → events → SSE (no broker needed).
+- [ ] B6. RabbitMQ integration (aio-pika): command publisher + event consumer; graceful no-broker mode (BFF_BROKER=off|on). Env config, no secrets.
+- [ ] B7. Python Core worker (backend/core): consume commands from RabbitMQ, run simulated lifecycle, publish RunEvents (mirrors mock event stream). Replaces the internal simulator when broker is on.
+- [ ] B8. docker-compose (rabbitmq + bff + core) + Dockerfiles + .env.example.
+- [ ] B9. Frontend real adapters behind the service interface: realApiClient + real EventSource stream; env VITE_API_MODE=mock|real, VITE_API_BASE_URL. Default mock (app unchanged).
+- [ ] B10. Docs: backend/README run guide; update root README + docs/HLD.md "Running the real stack"; sanitization note.
+- [ ] B11. Verify: venv pip install; python -m compileall; boot BFF no-broker; curl REST + SSE; docker round-trip if available (no docker in dev env — document).
