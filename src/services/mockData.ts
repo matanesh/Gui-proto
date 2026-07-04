@@ -294,6 +294,8 @@ function seededHistory(): Run[] {
       summary: summaryByStatus[status],
       currentPhase: PHASES_BY_STATUS[status],
       targetPcId: null,
+      targetDeviceId: null,
+      targetLabel: null,
     });
   }
 
@@ -333,6 +335,8 @@ function seededHistory(): Run[] {
             : null,
       currentPhase: PHASES_BY_STATUS[status],
       targetPcId: pcId,
+      targetDeviceId: null,
+      targetLabel: `${pcId}`,
     });
   }
 

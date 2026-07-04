@@ -33,8 +33,12 @@ export interface CommandRequest {
   requestedBy: string;
   /** Client-generated UUID; makes submission idempotent (see docs/API_CONTRACT.md). */
   clientRequestId: string;
-  /** Optional fleet access point this command targets (Fleet Map). */
+  /** Optional servicing access point this command targets (Fleet Map). */
   targetPcId?: string;
+  /** Optional specific connected device targeted (phone/laptop under an AP). */
+  targetDeviceId?: string;
+  /** Optional human label for the target. */
+  targetLabel?: string;
 }
 
 export interface CommandAck {

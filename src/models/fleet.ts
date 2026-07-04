@@ -26,12 +26,23 @@ export interface AccessPoint {
 
 export interface ConnectedDevice {
   id: string;
-  /** id of the parent AccessPoint. */
+  /** id of the servicing AccessPoint (the router/PC it connects through). */
   parentId: string;
   name: string;
   ip: string | null;
   type: string | null;
+  /**
+   * Exact last-known location, if a command returned it. When null, the device
+   * location is only approximate (derived from its servicing access point).
+   */
+  lat: number | null;
+  lng: number | null;
   extra: Record<string, string>;
+}
+
+/** True when the device reported an exact position (vs. approximate-via-AP). */
+export function hasExactLocation(device: ConnectedDevice): boolean {
+  return device.lat !== null && device.lng !== null;
 }
 
 /** An access point joined with its connected devices, for the details panel. */

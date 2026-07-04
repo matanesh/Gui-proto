@@ -121,15 +121,28 @@ VITE_MAP_TILE_URL="http://tiles.internal/{z}/{x}/{y}.png"
 - `access-points.csv` (parents) — columns: `id, name, ip, lat, lng, group,
   deviceStatus, heading, fov, range` **+ any extra columns you add** (preserved
   and shown in the details panel).
-- `connected-devices.csv` (children) — columns: `id, parentId, name, ip, type`
-  (+ extras). `parentId` links a device to an access point `id`.
+- `connected-devices.csv` (children) — columns: `id, parentId, name, ip, type,
+  lat, lng` (+ extras). `parentId` links a device to its **servicing** access
+  point `id`. `lat`/`lng` are optional: fill them for a device whose exact
+  position is known, leave blank for a device located only approximately (via
+  its servicing AP).
 
 Edit those files (or use the in-app **Upload CSV** button to swap datasets for
 the session — parsed in your browser, nothing is uploaded).
 
 **Coverage sectors.** If an access point has `heading` (deg from north), `fov`
-(deg), and `range` (m), the map draws a translucent coverage wedge — handy for
-routers/antennas. Leave them blank for a plain marker.
+(deg), and `range` (m), **double-click its marker** to reveal a translucent
+coverage wedge — handy for routers/antennas. Double-click again to hide it.
+
+**Command Console & mobile targeting.** The main **Dashboard** (and the Fleet
+Map) has a Command Console: type an **IP** (an access point, *or* a connected
+device such as a phone/laptop) — or a name/id — pick a command from the
+dropdown, and **Send**. Targeting a device resolves to its servicing access
+point; if the device reported an **exact** location it's shown precisely (with a
+link line to its AP), otherwise an **approximate area** is drawn around the
+servicing AP. Sending opens a **draggable, resizable floating window** with a
+mini map of the target and the live command result (status/progress), plus a
+link to the full Run Details.
 
 **Command history per PC.** Sending a command from a PC's panel creates a run in
 the same in-memory store as the Runs screen, tagged with the PC id. The panel

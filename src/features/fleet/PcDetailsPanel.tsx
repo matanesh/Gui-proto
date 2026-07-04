@@ -22,9 +22,11 @@ function Field({ label, value, mono }: { label: string; value: string; mono?: bo
 export function PcDetailsPanel({
   accessPoint,
   onClose,
+  onLaunched,
 }: {
   accessPoint: AccessPointWithDevices;
   onClose: () => void;
+  onLaunched?: (runId: string) => void;
 }) {
   // Command history for this PC — same in-memory store as the Runs screen.
   const runsQuery = useRunsList({ targetPcId: accessPoint.id, pageSize: 50, sort: "createdAt:desc" });
@@ -160,7 +162,7 @@ export function PcDetailsPanel({
       </div>
 
       <div className="border-t p-4">
-        <SendCommandDialog accessPoint={accessPoint} />
+        <SendCommandDialog accessPoint={accessPoint} onLaunched={onLaunched} />
         <p className="mt-2 flex items-center justify-center gap-1 text-[11px] text-muted-foreground">
           <MapPin className="h-3 w-3" />
           Sending a command creates a run tagged to this access point.

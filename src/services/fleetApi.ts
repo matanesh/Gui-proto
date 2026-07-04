@@ -14,7 +14,7 @@ const AP_URL = "/data/access-points.csv";
 const DEV_URL = "/data/connected-devices.csv";
 
 const AP_KNOWN = new Set(["id", "name", "ip", "lat", "lng", "group", "deviceStatus", "heading", "fov", "range"]);
-const DEV_KNOWN = new Set(["id", "parentId", "name", "ip", "type"]);
+const DEV_KNOWN = new Set(["id", "parentId", "name", "ip", "type", "lat", "lng"]);
 
 // Session overrides set by CSV upload (null = use the bundled file).
 let overrideApsCsv: string | null = null;
@@ -70,6 +70,8 @@ function toDevice(record: Record<string, string>, index: number): ConnectedDevic
     name: record.name?.trim() || "Unnamed device",
     ip: record.ip?.trim() || null,
     type: record.type?.trim() || null,
+    lat: numOrNull(record.lat),
+    lng: numOrNull(record.lng),
     extra: extraOf(record, DEV_KNOWN),
   };
 }

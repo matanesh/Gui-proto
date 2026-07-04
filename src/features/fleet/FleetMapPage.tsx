@@ -1,10 +1,8 @@
-import { useMemo, useState } from "react";
-import { Radar, Search } from "lucide-react";
+import { useCallback, useMemo, useState } from "react";
+import { MousePointerClick, Search } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -18,6 +16,9 @@ import { ErrorState } from "@/components/shared/ErrorState";
 import { MapView } from "./MapView";
 import { PcDetailsPanel } from "./PcDetailsPanel";
 import { UploadFleetDialog } from "./UploadFleetDialog";
+import { CommandConsole } from "./CommandConsole";
+import { CommandResultWindow } from "./CommandResultWindow";
+import { accessPointTarget, type ResolvedTarget } from "./targets";
 import { useFleet } from "@/hooks/useFleet";
 import { useRunsList } from "@/hooks/useRuns";
 import { ACTIVE_TILE_SOURCE_ID, TILE_SOURCES } from "@/config/map";
@@ -39,7 +40,17 @@ export function FleetMapPage() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [group, setGroup] = useState("all");
-  const [showCoverage, setShowCoverage] = useState(true);
+  const [expandedCoverage, setExpandedCoverage] = useState<Set<string>>(new Set());
+  const [activeCommand, setActiveCommand] = useState<{ runId: string; target: ResolvedTarget } | null>(null);
+
+  const toggleCoverage = useCallback((id: string) => {
+    setExpandedCoverage((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }, []);
 
   const accessPoints = useMemo(() => fleetQuery.data?.accessPoints ?? [], [fleetQuery.data]);
   const devicesByParent = useMemo(() => fleetQuery.data?.devicesByParent ?? {}, [fleetQuery.data]);
@@ -119,11 +130,10 @@ export function FleetMapPage() {
             </SelectContent>
           </Select>
         </div>
-        <div className="flex items-center gap-2">
-          <Radar className="h-4 w-4 text-muted-foreground" />
-          <Label htmlFor="coverage" className="text-xs">Coverage</Label>
-          <Switch id="coverage" checked={showCoverage} onCheckedChange={setShowCoverage} />
-        </div>
+        <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+          <MousePointerClick className="h-3.5 w-3.5" />
+          Double-click a marker for coverage
+        </span>
         <Badge variant="outline">
           {filtered.length} / {accessPoints.length} shown
         </Badge>
@@ -136,6 +146,14 @@ export function FleetMapPage() {
           ))}
         </div>
       </div>
+
+      {/* Command console */}
+      <Card className="mb-4 p-3">
+        <CommandConsole
+          compact
+          onLaunched={(runId, target) => setActiveCommand({ runId, target })}
+        />
+      </Card>
 
       {/* Map + details */}
       {fleetQuery.isError ? (
@@ -155,18 +173,33 @@ export function FleetMapPage() {
                 allPoints={accessPoints}
                 latestByPc={latestByPc}
                 selectedId={selectedId}
-                showCoverage={showCoverage}
+                expandedCoverage={expandedCoverage}
                 onSelect={setSelectedId}
+                onToggleCoverage={toggleCoverage}
               />
             )}
           </Card>
 
           {selected && (
             <Card className="w-96 shrink-0 overflow-hidden p-0">
-              <PcDetailsPanel accessPoint={selected} onClose={() => setSelectedId(null)} />
+              <PcDetailsPanel
+                accessPoint={selected}
+                onClose={() => setSelectedId(null)}
+                onLaunched={(runId) =>
+                  setActiveCommand({ runId, target: accessPointTarget(selected) })
+                }
+              />
             </Card>
           )}
         </div>
+      )}
+
+      {activeCommand && (
+        <CommandResultWindow
+          runId={activeCommand.runId}
+          target={activeCommand.target}
+          onClose={() => setActiveCommand(null)}
+        />
       )}
     </div>
   );

@@ -33,8 +33,12 @@ export interface Run {
   requestedBy: string;
   summary: string | null;
   currentPhase: string | null;
-  /** Set when the run was launched against a fleet access point (Fleet Map). */
+  /** Servicing access point this run targeted (Fleet Map), if any. */
   targetPcId: string | null;
+  /** Specific connected device targeted (phone/laptop under an AP), if any. */
+  targetDeviceId: string | null;
+  /** Human label for the target, e.g. "Phone-7 (10.10.2.31)". */
+  targetLabel: string | null;
 }
 
 export interface RunsPage {

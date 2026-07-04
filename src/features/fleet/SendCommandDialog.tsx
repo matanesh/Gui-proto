@@ -27,6 +27,8 @@ import type { AccessPoint, CommandParameters } from "@/models";
 
 interface SendCommandDialogProps {
   accessPoint: AccessPoint;
+  /** If provided, called with the new runId instead of navigating to Run Details. */
+  onLaunched?: (runId: string) => void;
 }
 
 /**
@@ -34,7 +36,7 @@ interface SendCommandDialogProps {
  * catalog, form, and run lifecycle — the only difference is `targetPcId`, which
  * ties the resulting run to this PC (surfaced in its history).
  */
-export function SendCommandDialog({ accessPoint }: SendCommandDialogProps) {
+export function SendCommandDialog({ accessPoint, onLaunched }: SendCommandDialogProps) {
   const [open, setOpen] = useState(false);
   const [commandId, setCommandId] = useState<string | null>(null);
   const commandsQuery = useCommands();
@@ -57,10 +59,11 @@ export function SendCommandDialog({ accessPoint }: SendCommandDialogProps) {
       {
         onSuccess: (ack) => {
           toast.success(`Command sent to ${accessPoint.name}`, {
-            description: `${ack.runId} — accepted (202). Opening run…`,
+            description: `${ack.runId} — accepted (202).`,
           });
           setOpen(false);
-          navigate(`/runs/${ack.runId}`);
+          if (onLaunched) onLaunched(ack.runId);
+          else navigate(`/runs/${ack.runId}`);
         },
         onError: (error) =>
           toast.error("Send failed", {

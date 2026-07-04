@@ -55,3 +55,17 @@ Rules: after each completed step, mark it `[x]`, add a note (what was done, file
   history links to Run Details.
 - Files: src/features/fleet/*, src/services/fleetApi.ts, src/hooks/useFleet.ts,
   src/config/map.ts, src/models/fleet.ts, src/lib/csv.ts.
+
+## Feature: Command Console + mobile targeting + floating result window (added after DONE)
+- Command Console on Dashboard + Fleet Map: search target by IP/name/id (access
+  point OR connected device), pick command from dropdown, Send.
+- Mobile device targeting: device resolves to servicing AP; exact location shown
+  if reported (marker + link line), else approximate area (circle) around the AP.
+  connected-devices.csv gained optional lat/lng; some phones/laptops added.
+- Draggable/resizable floating result window (react-rnd) with mini map (TargetMap)
+  + live run status/progress; drives run lifecycle via useRunEvents.
+- Coverage pizza now shown on double-click of a marker (was global toggle).
+- Runs extended with targetDeviceId + targetLabel; submit + seed updated.
+- Files: src/features/fleet/{CommandConsole,CommandResultWindow,TargetMap,targets}.tsx,
+  src/features/commands/defaults.ts; edits to MapView, FleetMapPage, PcDetailsPanel,
+  SendCommandDialog, DashboardPage, models, fleetApi, mockData, runsApi.

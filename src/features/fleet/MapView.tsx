@@ -19,8 +19,10 @@ interface MapViewProps {
   allPoints: AccessPoint[];
   latestByPc: Record<string, Run>;
   selectedId: string | null;
-  showCoverage: boolean;
+  /** Ids of access points whose coverage sector is expanded (double-click). */
+  expandedCoverage: Set<string>;
   onSelect: (id: string) => void;
+  onToggleCoverage: (id: string) => void;
 }
 
 function FitBounds({ points }: { points: AccessPoint[] }) {
@@ -38,8 +40,9 @@ export function MapView({
   allPoints,
   latestByPc,
   selectedId,
-  showCoverage,
+  expandedCoverage,
   onSelect,
+  onToggleCoverage,
 }: MapViewProps) {
   const tile = TILE_SOURCES[ACTIVE_TILE_SOURCE_ID];
 
@@ -49,6 +52,7 @@ export function MapView({
       zoom={MAP_DEFAULT_ZOOM}
       className="h-full w-full"
       scrollWheelZoom
+      doubleClickZoom={false}
     >
       <TileLayer
         url={tile.url}
@@ -63,23 +67,28 @@ export function MapView({
         const color = markerColor(ap, latest);
         const selected = ap.id === selectedId;
 
+        const coverageShown = expandedCoverage.has(ap.id) && hasCoverage(ap);
+
         return (
           <Fragment key={ap.id}>
-            {showCoverage && hasCoverage(ap) && (
+            {coverageShown && (
               <Polygon
                 positions={coveragePolygon(ap)}
                 pathOptions={{
                   color,
                   weight: 1,
                   fillColor: color,
-                  fillOpacity: selected ? 0.28 : 0.14,
+                  fillOpacity: selected ? 0.28 : 0.16,
                 }}
               />
             )}
             <Marker
               position={[ap.lat, ap.lng]}
               icon={makeMarkerIcon(color, { selected, active: isActiveRun(latest) })}
-              eventHandlers={{ click: () => onSelect(ap.id) }}
+              eventHandlers={{
+                click: () => onSelect(ap.id),
+                dblclick: () => onToggleCoverage(ap.id),
+              }}
             >
               <Tooltip direction="top" offset={[0, -8]}>
                 <span className="font-medium">{ap.name}</span>

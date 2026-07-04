@@ -74,6 +74,8 @@ export async function submitCommand(request: CommandRequest): Promise<CommandAck
         summary: null,
         currentPhase: "pending-dispatch",
         targetPcId: request.targetPcId ?? null,
+        targetDeviceId: request.targetDeviceId ?? null,
+        targetLabel: request.targetLabel ?? null,
       };
       putRun(run);
       rememberClientRequest(request.clientRequestId, runId);

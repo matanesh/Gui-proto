@@ -281,3 +281,8 @@
 .leaflet-bar a:hover {
   background: var(--accent);
 }
+
+/* Floating command result window (react-rnd) drag handle. */
+.cmd-window-drag {
+  touch-action: none;
+}
