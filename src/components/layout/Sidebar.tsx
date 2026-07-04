@@ -3,6 +3,7 @@ import {
   Activity,
   LayoutDashboard,
   ListChecks,
+  Map,
   PanelLeftClose,
   PanelLeftOpen,
   Settings,
@@ -17,6 +18,7 @@ const NAV_ITEMS = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard, end: true },
   { to: "/commands", label: "Commands", icon: TerminalSquare, end: false },
   { to: "/runs", label: "Runs", icon: ListChecks, end: false },
+  { to: "/map", label: "Fleet Map", icon: Map, end: false },
   { to: "/health", label: "System Health", icon: Activity, end: false },
   { to: "/config", label: "Configuration", icon: Settings, end: false },
 ] as const;

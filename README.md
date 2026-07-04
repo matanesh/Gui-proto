@@ -98,6 +98,44 @@ fast-refresh guard. Run `npm run lint`; it currently reports **zero problems**.
 
 ---
 
+## Fleet Map
+
+The **Fleet Map** screen (`/map`) plots access points (PCs) on a Leaflet map,
+with click-to-inspect details, connected devices, coverage sectors, and
+command history.
+
+**Offline / air-gapped tiles.** The engine is Leaflet (MIT, no API key). The
+tile *source* is a config value so the same code works online and on an isolated
+network:
+
+```bash
+# .env
+VITE_MAP_TILE_SOURCE="google"     # default demo (also: "osm")
+# For the isolated system, point at your internal tile server or bundled tiles:
+VITE_MAP_TILE_SOURCE="offline"
+VITE_MAP_TILE_URL="http://tiles.internal/{z}/{x}/{y}.png"
+```
+
+**Editable data (two CSVs).** The fleet loads from `public/data/`:
+
+- `access-points.csv` (parents) — columns: `id, name, ip, lat, lng, group,
+  deviceStatus, heading, fov, range` **+ any extra columns you add** (preserved
+  and shown in the details panel).
+- `connected-devices.csv` (children) — columns: `id, parentId, name, ip, type`
+  (+ extras). `parentId` links a device to an access point `id`.
+
+Edit those files (or use the in-app **Upload CSV** button to swap datasets for
+the session — parsed in your browser, nothing is uploaded).
+
+**Coverage sectors.** If an access point has `heading` (deg from north), `fov`
+(deg), and `range` (m), the map draws a translucent coverage wedge — handy for
+routers/antennas. Leave them blank for a plain marker.
+
+**Command history per PC.** Sending a command from a PC's panel creates a run in
+the same in-memory store as the Runs screen, tagged with the PC id. The panel
+shows the latest command status and full history, each linking to Run Details.
+Marker color reflects the latest command outcome (or device status if none yet).
+
 ## Folder structure
 
 ```

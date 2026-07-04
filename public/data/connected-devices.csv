@@ -1,0 +1,16 @@
+id,parentId,name,ip,type,role
+dev-001,ap-001,Alpha-Workstation-1,10.10.1.11,workstation,operator
+dev-002,ap-001,Alpha-Workstation-2,10.10.1.12,workstation,analyst
+dev-003,ap-001,Alpha-Printer,10.10.1.13,peripheral,shared
+dev-004,ap-006,Central-Blade-1,10.10.2.11,blade,compute
+dev-005,ap-006,Central-Blade-2,10.10.2.12,blade,compute
+dev-006,ap-006,Central-Blade-3,10.10.2.13,blade,compute
+dev-007,ap-006,Central-Storage,10.10.2.14,storage,array
+dev-008,ap-011,East-Workstation-1,10.10.3.11,workstation,operator
+dev-009,ap-011,East-Sensor-Hub,10.10.3.12,hub,aggregator
+dev-010,ap-016,South-Blade-1,10.10.4.11,blade,compute
+dev-011,ap-016,South-Blade-2,10.10.4.12,blade,compute
+dev-012,ap-021,West-Workstation-1,10.10.5.11,workstation,operator
+dev-013,ap-021,West-Workstation-2,10.10.5.12,workstation,analyst
+dev-014,ap-026,Highland-Relay-Node,10.10.6.11,relay,repeater
+dev-015,ap-026,Highland-Camera,10.10.6.12,sensor,camera

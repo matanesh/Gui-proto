@@ -73,6 +73,7 @@ export async function submitCommand(request: CommandRequest): Promise<CommandAck
         requestedBy: request.requestedBy,
         summary: null,
         currentPhase: "pending-dispatch",
+        targetPcId: request.targetPcId ?? null,
       };
       putRun(run);
       rememberClientRequest(request.clientRequestId, runId);
@@ -81,6 +82,7 @@ export async function submitCommand(request: CommandRequest): Promise<CommandAck
         parameters: request.parameters,
         requestedBy: request.requestedBy,
         clientRequestId: request.clientRequestId,
+        targetPcId: request.targetPcId ?? null,
       });
 
       return {
@@ -105,6 +107,9 @@ export async function fetchRuns(filter: RunsFilter = {}): Promise<RunsPage> {
     }
     if (filter.commandType) {
       items = items.filter((r) => r.commandId === filter.commandType);
+    }
+    if (filter.targetPcId) {
+      items = items.filter((r) => r.targetPcId === filter.targetPcId);
     }
     if (filter.fromDate) {
       items = items.filter((r) => r.createdAt >= new Date(filter.fromDate!).toISOString());

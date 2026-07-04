@@ -33,6 +33,8 @@ export interface CommandRequest {
   requestedBy: string;
   /** Client-generated UUID; makes submission idempotent (see docs/API_CONTRACT.md). */
   clientRequestId: string;
+  /** Optional fleet access point this command targets (Fleet Map). */
+  targetPcId?: string;
 }
 
 export interface CommandAck {

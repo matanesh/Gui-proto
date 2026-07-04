@@ -293,11 +293,56 @@ function seededHistory(): Run[] {
       requestedBy: pick(rand, OPERATORS),
       summary: summaryByStatus[status],
       currentPhase: PHASES_BY_STATUS[status],
+      targetPcId: null,
+    });
+  }
+
+  // Seed a handful of access-point-targeted runs so the Fleet Map shows
+  // last-command status and history immediately. These ids match public/data/access-points.csv.
+  const seededPcIds = ["ap-002", "ap-005", "ap-007", "ap-011", "ap-014", "ap-019", "ap-023", "ap-028"];
+  const pcStatuses: RunStatus[] = ["succeeded", "succeeded", "failed", "running", "cancelled", "succeeded"];
+  for (let i = 0; i < 14; i++) {
+    const command = pick(rand, COMMAND_DEFINITIONS);
+    const status = pick(rand, pcStatuses);
+    const pcId = pick(rand, seededPcIds);
+    const ageMs = rand() * 10 * 24 * 3600 * 1000;
+    const createdAt = new Date(now - ageMs);
+    const started = status !== "queued" && status !== "accepted";
+    const startedAt = started ? new Date(createdAt.getTime() + 3000 + rand() * 12000) : null;
+    const terminal = ["succeeded", "failed", "cancelled", "timeout"].includes(status);
+    const durationSec = terminal ? Math.round(command.estimatedDurationSec * (0.5 + rand())) : null;
+    const completedAt =
+      terminal && startedAt ? new Date(startedAt.getTime() + (durationSec ?? 0) * 1000) : null;
+
+    runs.push({
+      runId: `run-${createdAt.toISOString().slice(0, 10).replace(/-/g, "")}-${String(100000 + Math.floor(rand() * 899999))}`,
+      commandId: command.id,
+      commandName: command.name,
+      status,
+      progress: status === "succeeded" ? 100 : status === "running" ? Math.round(20 + rand() * 60) : Math.round(rand() * 80),
+      createdAt: createdAt.toISOString(),
+      startedAt: startedAt ? startedAt.toISOString() : null,
+      completedAt: completedAt ? completedAt.toISOString() : null,
+      durationSec,
+      requestedBy: pick(rand, OPERATORS),
+      summary:
+        status === "succeeded"
+          ? `${command.name} applied to ${pcId}.`
+          : status === "failed"
+            ? `Command to ${pcId} failed.`
+            : null,
+      currentPhase: PHASES_BY_STATUS[status],
+      targetPcId: pcId,
     });
   }
 
   runs.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   return runs;
+}
+
+/** Runs launched against a given access point, newest first. */
+export function getRunsByPc(pcId: string): Run[] {
+  return getAllRuns().filter((r) => r.targetPcId === pcId);
 }
 
 // ---------------------------------------------------------------------------

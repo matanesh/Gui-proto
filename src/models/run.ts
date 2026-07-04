@@ -33,6 +33,8 @@ export interface Run {
   requestedBy: string;
   summary: string | null;
   currentPhase: string | null;
+  /** Set when the run was launched against a fleet access point (Fleet Map). */
+  targetPcId: string | null;
 }
 
 export interface RunsPage {
@@ -49,6 +51,8 @@ export interface RunsFilter {
   fromDate?: string;
   toDate?: string;
   search?: string;
+  /** Filter to runs launched against a specific access point. */
+  targetPcId?: string;
   page?: number;
   pageSize?: number;
   sort?: string;

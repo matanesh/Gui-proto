@@ -41,3 +41,17 @@ Rules: after each completed step, mark it `[x]`, add a note (what was done, file
 ## Post-completion polish (after DONE)
 - Route-level code splitting: pages lazy-loaded in src/app/router.tsx with a Suspense fallback in AppShell. Main chunk 558 kB → 393 kB; per-screen chunks load on demand; chunk-size build warning resolved.
 - Added catch-all 404 route (src/features/misc/NotFoundPage.tsx) for unknown URLs.
+
+## Feature: Fleet Map (added after DONE)
+- New /map screen (Leaflet + react-leaflet, MIT). Tile source configurable
+  (google default / osm / offline internal URL via VITE_MAP_TILE_*).
+- Two editable CSVs in public/data (access-points + connected-devices),
+  parser preserves unknown columns; in-app Upload CSV override.
+- Markers colored by latest command outcome / device status; optional coverage
+  sector wedges (heading/fov/range); click -> details panel (fields, extras,
+  connected devices, last status, history).
+- Command send from a PC creates a run tagged with targetPcId (extended Run,
+  CommandRequest, RunsFilter, mock store + seeded PC-targeted history);
+  history links to Run Details.
+- Files: src/features/fleet/*, src/services/fleetApi.ts, src/hooks/useFleet.ts,
+  src/config/map.ts, src/models/fleet.ts, src/lib/csv.ts.

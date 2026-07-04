@@ -223,3 +223,61 @@
   0% { transform: translateX(-120%); }
   100% { transform: translateX(320%); }
 }
+
+/* ---------------------------------------------------------------------------
+ * Fleet map markers (Leaflet divIcons). Kept out of the Leaflet default icon
+ * pipeline, so no broken image paths.
+ * ------------------------------------------------------------------------- */
+.fleet-marker-wrap {
+  background: transparent;
+  border: 0;
+}
+.fleet-marker {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+  background: var(--dot, #64748b);
+  border: 2px solid oklch(0.98 0 0 / 0.85);
+  box-shadow: 0 0 0 1px oklch(0 0 0 / 0.4), 0 1px 3px oklch(0 0 0 / 0.5);
+}
+.fleet-marker--selected {
+  border-color: #ffffff;
+  box-shadow: 0 0 0 3px var(--dot, #64748b), 0 0 0 4px oklch(0 0 0 / 0.4);
+}
+.fleet-marker--active::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 9999px;
+  border: 2px solid var(--dot, #3b82f6);
+  animation: fleet-ping 1.4s ease-out infinite;
+}
+@keyframes fleet-ping {
+  0% { transform: scale(0.8); opacity: 0.8; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fleet-marker--active::after { animation: none; }
+}
+
+/* Leaflet surfaces tuned for the dark theme. */
+.leaflet-container {
+  background: oklch(0.18 0.02 260);
+  font-family: inherit;
+}
+.leaflet-container .leaflet-control-attribution {
+  background: oklch(0.18 0.02 260 / 0.75);
+  color: var(--muted-foreground);
+}
+.leaflet-container .leaflet-control-attribution a {
+  color: var(--primary);
+}
+.leaflet-bar a {
+  background: var(--card);
+  color: var(--foreground);
+  border-color: var(--border);
+}
+.leaflet-bar a:hover {
+  background: var(--accent);
+}
