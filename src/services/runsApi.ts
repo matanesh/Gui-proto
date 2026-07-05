@@ -6,7 +6,14 @@ import type {
   RunsPage,
 } from "@/models";
 import { isTerminalStatus } from "@/models";
+import { IS_REAL } from "@/config/api";
 import { ApiError, simulateRequest } from "./apiClient";
+import {
+  realCancelRun,
+  realFetchRun,
+  realFetchRuns,
+  realSubmitCommand,
+} from "./real/realApi";
 import {
   COMMAND_DEFINITIONS,
   getAllRuns,
@@ -30,6 +37,7 @@ export async function fetchRunRequestPayload(runId: string): Promise<unknown> {
  * stream and snapshot queries, exactly as the real BFF would behave.
  */
 export async function submitCommand(request: CommandRequest): Promise<CommandAck> {
+  if (IS_REAL) return realSubmitCommand(request);
   return simulateRequest(
     () => {
       // Idempotency: same clientRequestId returns the original ack.
@@ -101,6 +109,7 @@ export async function submitCommand(request: CommandRequest): Promise<CommandAck
 
 /** Mirrors GET /api/runs with filters + client-side pagination. */
 export async function fetchRuns(filter: RunsFilter = {}): Promise<RunsPage> {
+  if (IS_REAL) return realFetchRuns(filter);
   return simulateRequest(() => {
     let items = getAllRuns();
 
@@ -159,6 +168,7 @@ export async function fetchRuns(filter: RunsFilter = {}): Promise<RunsPage> {
  * failRate 0: this path must stay reliable for the demo-critical screen.
  */
 export async function fetchRun(runId: string): Promise<Run> {
+  if (IS_REAL) return realFetchRun(runId);
   return simulateRequest(
     () => {
       const run = getRun(runId);
@@ -173,6 +183,7 @@ export async function fetchRun(runId: string): Promise<Run> {
 
 /** Mirrors POST /api/runs/{runId}/cancel — cooperative cancellation request. */
 export async function cancelRun(runId: string): Promise<{ runId: string; cancellationRequested: boolean; message: string }> {
+  if (IS_REAL) return realCancelRun(runId);
   return simulateRequest(
     () => {
       const run = getRun(runId);

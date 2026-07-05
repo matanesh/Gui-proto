@@ -1,6 +1,8 @@
 import type { Run, RunEvent, RunEventType, Severity, SseConnectionState } from "@/models";
 import { isTerminalStatus } from "@/models";
+import { IS_REAL } from "@/config/api";
 import { getRun, updateRun } from "./mockData";
+import { connectRealRunEventStream } from "./real/realEventStream";
 
 /**
  * Mock SSE client — an EventSource-like abstraction over a simulated stream.
@@ -98,6 +100,9 @@ export function connectRunEventStream(
   runId: string,
   handlers: RunEventStreamHandlers,
 ): RunEventStreamHandle {
+  // Real mode: delegate to a native EventSource against the BFF's SSE endpoint.
+  if (IS_REAL) return connectRealRunEventStream(runId, handlers);
+
   let closed = false;
   let state: SseConnectionState = "connecting";
   const timers = new Set<ReturnType<typeof setTimeout>>();

@@ -1,9 +1,12 @@
 import type { HealthCheckEntry, HealthSnapshot } from "@/models";
+import { IS_REAL } from "@/config/api";
 import { simulateRequest } from "./apiClient";
 import { buildHealthSnapshot, buildHealthTimeline } from "./mockData";
+import { realFetchHealth } from "./real/realApi";
 
 /** Mirrors GET /api/health. */
 export async function fetchHealth(): Promise<HealthSnapshot> {
+  if (IS_REAL) return realFetchHealth();
   return simulateRequest(() => buildHealthSnapshot(), { failRate: 0.04 });
 }
 

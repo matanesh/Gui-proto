@@ -14,6 +14,11 @@ interface ImportMetaEnv {
   readonly VITE_MAP_CENTER?: string;
   /** Fallback map zoom. */
   readonly VITE_MAP_ZOOM?: string;
+
+  /** API mode: "mock" (default) or "real" (talk to the FastAPI BFF). */
+  readonly VITE_API_MODE?: string;
+  /** Base URL of the real BFF, e.g. http://localhost:8000/api */
+  readonly VITE_API_BASE_URL?: string;
 }
 
 interface ImportMeta {
