@@ -17,7 +17,8 @@ cd "$PROJECT_DIR" || exit 1
 
 # Do not start a second agent while an interactive Claude Code session is
 # already working in this WSL instance.
-if pgrep -u "$USER" -f '/claude-code/bin/claude(\.exe)?( |$)' >/dev/null; then
+if [[ "${ALLOW_EXISTING_CLAUDE:-0}" != "1" ]] && \
+   pgrep -u "$USER" -f '/claude-code/bin/claude(\.exe)?( |$)' >/dev/null; then
   echo "$(date --iso-8601=seconds) — waiting for the active Claude Code session to finish"
   while pgrep -u "$USER" -f '/claude-code/bin/claude(\.exe)?( |$)' >/dev/null; do
     sleep 60

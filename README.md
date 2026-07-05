@@ -253,6 +253,37 @@ source.onmessage = (e) => onEvent(JSON.parse(e.data) as RunEvent);
 
 `useSseConnection` already owns connect/cleanup, so only the client construction changes.
 
+## Real backend (FastAPI BFF + RabbitMQ + Core)
+
+The [`backend/`](backend/) directory contains a working implementation of the HLD:
+a **FastAPI BFF** that serves the REST contract and an SSE stream, a **RabbitMQ**
+integration, and a sanitized **Python Core** worker. It runs two ways:
+
+- **No broker (default)** — an internal simulator drives run lifecycles, so the
+  BFF is fully usable without RabbitMQ:
+  ```bash
+  cd backend && python3 -m venv .venv && source .venv/bin/activate
+  pip install -r requirements.txt
+  uvicorn app.main:app --reload --port 8000    # docs at http://localhost:8000/docs
+  ```
+- **Full stack** — RabbitMQ + BFF + Core via Docker:
+  ```bash
+  docker compose up --build                    # from the repo root
+  ```
+
+Point the frontend at it (default stays mock, so this is opt-in):
+
+```bash
+VITE_API_MODE=real VITE_API_BASE_URL=http://localhost:8000/api npm run dev
+```
+
+> The frontend real-mode adapter (swapping the mock services for `fetch` +
+> `EventSource` behind `VITE_API_MODE`) is the remaining wiring step — see
+> `backend/README.md` and PROGRESS.md (Phase 3, step B9).
+
+See [`backend/README.md`](backend/README.md) for endpoints, layout, and the
+broker vs. no-broker details.
+
 ---
 
 ## Design decisions in brief

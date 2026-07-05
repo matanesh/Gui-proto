@@ -181,6 +181,16 @@ Full analysis in [FAILURE_MODES.md](./FAILURE_MODES.md).
 - Redis/cache only if a concrete backend need appears (SSE fan-out, rate limiting, replay buffer — see ADR-009).
 - WebSocket upgrade path if true bidirectional realtime becomes a requirement (ADR-007).
 
+### Running the real stack
+
+A working implementation of this design lives in [`backend/`](../backend/): a
+FastAPI BFF (REST + SSE), a RabbitMQ integration, and a sanitized Python Core
+worker. It runs **no-broker** (an internal simulator drives runs — `uvicorn
+app.main:app`) or **full-stack** via [`docker-compose.yml`](../docker-compose.yml)
+(`docker compose up --build`: RabbitMQ + BFF + Core). The frontend points at it
+with `VITE_API_MODE=real VITE_API_BASE_URL=http://localhost:8000/api`. See
+[`backend/README.md`](../backend/README.md).
+
 ## 13. Open Questions
 
 1. Event delivery guarantees: at-least-once assumed — is exactly-once required for any consumer?

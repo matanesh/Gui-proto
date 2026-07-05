@@ -1,0 +1,42 @@
+# Real HLD stack: RabbitMQ + FastAPI BFF + Python Core worker.
+# Sanitized placeholder credentials only — override for any real deployment.
+#
+#   docker compose up --build
+#   BFF:      http://localhost:8000  (docs at /docs)
+#   RabbitMQ: http://localhost:15672 (guest/guest)
+#   Point the frontend at the BFF:  VITE_API_MODE=real VITE_API_BASE_URL=http://localhost:8000/api npm run dev
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  bff:
+    build: ./backend
+    environment:
+      BFF_BROKER_ENABLED: "true"
+      BFF_RABBITMQ_URL: "amqp://guest:guest@rabbitmq:5672/"
+      BFF_CORS_ORIGINS: "http://localhost:5173,http://127.0.0.1:5173"
+    ports:
+      - "8000:8000"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  core:
+    build: ./backend
+    command: ["python", "-m", "core.worker"]
+    environment:
+      BFF_RABBITMQ_URL: "amqp://guest:guest@rabbitmq:5672/"
+      BFF_COMMANDS_EXCHANGE: "occ.commands"
+      BFF_EVENTS_EXCHANGE: "occ.events"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy

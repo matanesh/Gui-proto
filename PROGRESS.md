@@ -1,6 +1,6 @@
 # PROGRESS — Ops Command Center
 
-**NEXT STEP: B1 — backend scaffold (FastAPI BFF skeleton, config, requirements)**
+**NEXT STEP: B11 verify + commit the backend (see HANDOFF_NIGHT.md), then B9 frontend real-mode wiring — do these in an INTERACTIVE session (python/git/tsc were blocked overnight).**
 
 > Phases 1 & 2 (docs + mock frontend) are COMPLETE (see checklist below).
 > **Phase 3 (bottom of file)** aligns the code with the HLD: a real FastAPI BFF
@@ -92,14 +92,20 @@ Goal: React → REST → FastAPI BFF → RabbitMQ → Python Core; Core → Rabb
 The BFF must also run standalone (no broker) via an internal simulator, so it's demoable without RabbitMQ.
 Everything sanitized. Frontend stays mock by default; real mode via env flag. Commit + push after each step.
 
-- [ ] B1. Backend scaffold: backend/ (requirements.txt, app package, config from env, FastAPI app, uvicorn entry, README, .env.example).
-- [ ] B2. Pydantic models mirroring docs/API_CONTRACT.md + docs/EVENT_SCHEMA.md (Command, CommandField, Run, RunEvent, Health).
-- [ ] B3. In-memory run store + sanitized command catalog (mirrors frontend mock) so the BFF works without Core.
-- [ ] B4. REST endpoints per API_CONTRACT: GET /api/commands; POST /api/commands/{id}/runs (202+runId, clientRequestId idempotency); GET /api/runs (filters+pagination); GET /api/runs/{runId}; POST /api/runs/{runId}/cancel; GET /api/health.
-- [ ] B5. SSE: in-process async event bus + GET /api/events/stream?runId= (text/event-stream, heartbeats, Last-Event-ID). Internal simulator drives run lifecycle → events → SSE (no broker needed).
-- [ ] B6. RabbitMQ integration (aio-pika): command publisher + event consumer; graceful no-broker mode (BFF_BROKER=off|on). Env config, no secrets.
-- [ ] B7. Python Core worker (backend/core): consume commands from RabbitMQ, run simulated lifecycle, publish RunEvents (mirrors mock event stream). Replaces the internal simulator when broker is on.
-- [ ] B8. docker-compose (rabbitmq + bff + core) + Dockerfiles + .env.example.
-- [ ] B9. Frontend real adapters behind the service interface: realApiClient + real EventSource stream; env VITE_API_MODE=mock|real, VITE_API_BASE_URL. Default mock (app unchanged).
-- [ ] B10. Docs: backend/README run guide; update root README + docs/HLD.md "Running the real stack"; sanitization note.
-- [ ] B11. Verify: venv pip install; python -m compileall; boot BFF no-broker; curl REST + SSE; docker round-trip if available (no docker in dev env — document).
+> NIGHT NOTE (autonomous resume): the non-interactive session could run file
+> writes only — `git` and `python` were permission-blocked, so B1–B8 & B10 are
+> WRITTEN TO DISK but NOT yet committed/pushed and NOT yet verified. See
+> HANDOFF_NIGHT.md for the exact morning verify + commit steps. Do B9 + B11 in an
+> interactive session where tsc/npm/git run, then commit everything.
+
+- [x] B1. Backend scaffold — backend/{requirements.txt,.env.example,.gitignore,README.md,Dockerfile}, app package + core package. (written; unverified)
+- [x] B2. Pydantic models — backend/app/models.py (CamelModel + to_camel alias → camelCase JSON matching the frontend). (written; unverified)
+- [x] B3. Store + catalog — backend/app/store.py (in-memory runs, idempotency, event log, health, seeded history incl. ap-targeted) + catalog.py (6 sanitized commands). (written; unverified)
+- [x] B4. REST endpoints — backend/app/api/{commands,runs,health}.py: GET /commands, POST /commands/{id}/runs (202+runId+idempotency), GET /runs (filters+paginate), GET /runs/{id}, POST /runs/{id}/cancel, GET /health. (written; unverified)
+- [x] B5. SSE — backend/app/bus.py (async pub/sub) + simulator.py (no-broker lifecycle driver) + api/events.py (text/event-stream, heartbeats, Last-Event-ID replay). (written; unverified)
+- [x] B6. RabbitMQ — backend/app/broker.py (aio-pika command publisher + event consumer, applies events to snapshot + fans to bus); enabled via BFF_BROKER_ENABLED. (written; unverified)
+- [x] B7. Python Core worker — backend/core/worker.py (consumes commands, drives lifecycle, publishes RunEvents). (written; unverified)
+- [x] B8. docker-compose.yml (rabbitmq + bff + core) + backend/Dockerfile. (written; unverified)
+- [ ] B9. Frontend real adapters behind the service interface: realApiClient + real EventSource stream; env VITE_API_MODE=mock|real, VITE_API_BASE_URL. Default mock (app unchanged). **NOT STARTED — needs an interactive session (tsc) to avoid breaking the working frontend build.**
+- [x] B10. Docs — backend/README.md + root README "Real backend" section. (docs/HLD.md "running the real stack" still TODO)
+- [ ] B11. Verify: venv pip install; python -m compileall backend; boot BFF no-broker; curl REST + SSE; docker compose up round-trip; npm run build after B9. **NOT DONE — python/git blocked in the autonomous session.**
