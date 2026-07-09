@@ -286,3 +286,27 @@
 .cmd-window-drag {
   touch-action: none;
 }
+
+/* ---------------------------------------------------------------------------
+ * Live Event Stream — new rows animate in. Because the list is keyed by a
+ * stable event id, this class only plays on the DOM node that's genuinely
+ * new (existing rows aren't remounted when new ones are prepended).
+ * ------------------------------------------------------------------------- */
+.event-row-enter {
+  animation: event-row-in 260ms ease-out both;
+}
+@keyframes event-row-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .event-row-enter {
+    animation: none;
+  }
+}
