@@ -1,13 +1,14 @@
-IN PROGRESS — Phase 4
+DONE
 
 # PROGRESS — Ops Command Center
 
-**NEXT STEP: B11 verify + commit the backend (see HANDOFF_NIGHT.md), then B9 frontend real-mode wiring — do these in an INTERACTIVE session (python/git/tsc were blocked overnight).**
+**All phases complete — see Phase 4 at the bottom for the most recent work (Ops Command Center upgrade: cinematic intro, scenario runner, live events, timeline, architecture explain mode, failure modes, command palette).**
 
 > Phases 1 & 2 (docs + mock frontend) are COMPLETE (see checklist below).
-> **Phase 3 (bottom of file)** aligns the code with the HLD: a real FastAPI BFF
-> that talks to RabbitMQ and a Python Core, with SSE. The mock frontend keeps
-> working; the real path is behind an env flag. Work Phase 3 top-to-bottom.
+> **Phase 3** aligns the code with the HLD: a real FastAPI BFF that talks to
+> RabbitMQ and a Python Core, with SSE. The mock frontend keeps working; the
+> real path is behind an env flag. **Phase 4** (bottom of file) is the
+> cinematic/scenario-storytelling upgrade layered on top — frontend-only.
 
 Rules: after each completed step, mark it `[x]`, add a note (what was done, files changed), update NEXT STEP above, and `git commit` + `git push`. Never redo completed steps. When Phase 3 passes, write `DONE` on the first line of this file.
 
@@ -167,8 +168,24 @@ scripted simulation layer that sits alongside the existing mock/real API adapter
   error boundary so a failure can't block the app. "Replay intro" wired on
   Configuration page via a new non-persisted `uiStore.introReplayToken`.
   Verified live (full sequence, auto-transition, no-replay-on-reload, skip).
-- [ ] P4.9. Command Palette (Ctrl/Cmd+K) — navigation + demo actions.
-- [ ] P4.10. Visual polish pass — nav, badges, states, responsiveness.
-- [ ] P4.11. README/presenter notes + this file, final commit.
+- [x] P4.9. Command Palette — `src/features/command-palette/{CommandPalette,actions}.tsx`,
+  mounted in AppShell. Custom Dialog-based palette (no new dependency),
+  Ctrl/Cmd+K global shortcut + "Search commands" header button, filtered
+  grouped action list, arrow-key navigation, covers every route plus
+  run-selected-scenario/inject-failure/pause-resume-stream/reset-demo/
+  replay-intro/toggle-explain-mode. Verified live (open, filter, navigate).
+- [x] P4.10. Visual polish pass — "Sanitized Offline Demo" badge in
+  TopHeader; found and fixed a responsive overflow bug in TopHeader at
+  ~820px width (description/badges/search button now collapse in order
+  instead of wrapping over page content). Verified new screens at 820px
+  and 1500px.
+- [x] P4.11. README updated: cinematic intro section, new "Demo storytelling
+  layer" section explaining the scenario/event/timeline/architecture/
+  failure-modes layer is a second, independent simulation from the
+  Command Console/Runs mock REST+SSE layer, "Recommended demo flow"
+  section, folder structure updated. This file marked DONE.
 
-**NEXT STEP: P4.9 — Command Palette.**
+**Phase 4 complete.** Everything is frontend-only and additive: no changes to
+`backend/`, the mock REST/SSE Run lifecycle, or the real-mode adapters. If
+resuming later, there is no open next step — treat any further work as a new
+phase.

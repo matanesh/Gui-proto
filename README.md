@@ -78,7 +78,7 @@ To serve the built assets from any static host: `npm run build`, then serve the
 
 ### System name (editable)
 
-The system name shown in the **boot animation**, the sidebar, and the browser
+The system name shown in the **cinematic intro**, the sidebar, and the browser
 tab is a single editable value. Set it without touching code by creating a
 `.env` (copy from [`.env.example`](.env.example)):
 
@@ -86,9 +86,25 @@ tab is a single editable value. Set it without touching code by creating a
 VITE_SYSTEM_NAME="Mission Control"
 ```
 
-It falls back to `Ops Command Center` if unset. A short intro animation plays on
-entry (CSS-only, GPU-friendly, respects `prefers-reduced-motion`, and is
-skippable with any key/click).
+It falls back to `Ops Command Center` if unset.
+
+### Cinematic intro
+
+A short mission-control entry sequence plays once per browser session — a
+CSS/SVG starfield, a perspective grid, a command-vehicle silhouette with
+engine glow, a radar sweep, and staggered HUD lines ("Establishing secure
+demo session" → "All systems nominal") — before zooming/fading into the
+dashboard. It's:
+
+- **Skippable** — a visible "Skip intro" button, or <kbd>Esc</kbd>.
+- **Session-remembered** — won't replay on refresh; presenters can force it
+  again from **Configuration → Presentation → Replay intro** (also in the
+  command palette).
+- **Reduced-motion aware** — falls back to a near-instant static reveal.
+- **Non-blocking** — wrapped in an error boundary; a rendering failure never
+  prevents the dashboard underneath (already mounted) from showing.
+
+See `src/components/intro/`.
 
 ### Linting
 
@@ -149,6 +165,71 @@ the same in-memory store as the Runs screen, tagged with the PC id. The panel
 shows the latest command status and full history, each linking to Run Details.
 Marker color reflects the latest command outcome (or device status if none yet).
 
+## Demo storytelling layer (Scenario Runner, Live Event Stream, Timeline, Architecture, Failure Modes)
+
+Everything under **Scenarios**, **Event Stream**, **Timeline**, **Architecture**,
+and **Failure Modes** in the sidebar is a second, independent simulation layer —
+deliberately separate from the Command Console / Runs / Dashboard mock REST+SSE
+layer described above. That first layer models *one command → one run*; this
+layer models *a whole scripted incident*, driving the event stream, the map,
+and a presentation-oriented timeline together so it reads as a real demo
+narrative rather than a single API call. Both are frontend-only simulations;
+neither talks to `backend/`.
+
+- **`src/store/demoStore.ts`** — a small Zustand-based scenario player
+  (play/pause/reset/replay/speed 1x-2x-Instant/inject-failure/pause-stream)
+  that fires each scenario's scripted steps on a timer, appending to a capped
+  global event log and updating a role-keyed map overlay.
+- **`src/demo/scenarios/scenarios.ts`** — 9 sanitized scenarios (Happy Path,
+  Long Running, Progress Updates, Timeout + Retry, Partial Failure, Core
+  Service Unavailable, Event Stream Disconnect + Recovery, Duplicate Event,
+  Out-of-order Event), each with a title, description, duration, involved
+  components, map effects, full event sequence, expected outcome, and
+  presenter talking points.
+- **Scenario Runner** (`/scenarios`) — browse, start/pause/reset/replay,
+  change speed, or inject a failure mid-run.
+- **Live Event Stream** (`/events` + a Dashboard widget) — every event
+  emitted by the running scenario, filterable by severity/component, with a
+  details dialog and correlation-id "show related events" linking. New rows
+  animate in via a CSS keyframe (no JS animation loop).
+- **Timeline / Replay** (`/timeline`) — the canonical async flow (user action
+  → REST → BFF accept → broker publish → Core processing → progress event →
+  SSE stream → UI update → map update → completion/failure) with the current
+  stage driven live by whichever scenario step just fired; a clickable,
+  scenario-scoped step list sits below with the same playback controls.
+- **Fleet Map reactivity** — scenario map effects reference logical roles
+  (`primary`/`secondary`/`region-a`/`route-a`), resolved at runtime to real
+  markers from whatever CSV is loaded (`src/features/fleet/mapBindings.ts`),
+  so any scenario lights up any dataset: overlay color + pulse per asset
+  status, an animated route line, and a live scenario banner on the map.
+- **Explain Architecture** (`/architecture`) — Runtime Flow / Deployment View
+  / Failure View tabs sharing one linear node+edge diagram component (no
+  external graph library), explaining REST-for-commands, SSE-for-updates,
+  the BFF as a thin facade, RabbitMQ as the integration backbone, and where
+  each failure mode actually lives in the topology.
+- **Failure Modes** (`/failure-modes`) — 9 cards (SSE disconnected, command
+  timeout, duplicate event, out-of-order event, BFF unavailable, Core
+  processing failure, stale status, retry exhausted, partial success), each
+  with what happens / user-visible behavior / recovery strategy /
+  architectural implication, deep-linking into the matching scenario.
+- **Command Palette** (<kbd>Ctrl/Cmd+K</kbd>, or the "Search commands" button
+  in the header) — navigate anywhere, run the selected scenario, inject a
+  failure, pause/resume the event stream, reset the demo, replay the intro,
+  or toggle explain mode. See `src/features/command-palette/`.
+
+## Recommended demo flow
+
+1. Start with the cinematic intro (or replay it from Configuration / the palette).
+2. Land on the Dashboard, then open the Fleet Map.
+3. Open **Scenario Runner** and run **Happy Path Operation**.
+4. Watch **Live Event Stream** fill in and the Fleet Map react live.
+5. Open **Timeline / Replay** to explain the async REST/SSE flow step by step.
+6. Open **Explain Architecture** and walk Runtime Flow → Deployment View → Failure View.
+7. Run a scenario again and click **Inject Failure** mid-run.
+8. Point out the recovery behavior in the event stream and on the map.
+9. Open **Failure Modes** for the full engineering-maturity picture.
+10. Close on "future integration path": swap `VITE_API_MODE=real` and point at `backend/` — see below.
+
 ## Folder structure
 
 ```
@@ -156,19 +237,31 @@ docs/                        Architecture & design documentation (see below)
 src/
   app/                       Router + providers (TanStack Query, tooltips, toaster)
   components/
+    intro/                   Cinematic intro (starfield, error boundary)
     layout/                  AppShell, Sidebar, TopHeader, PageHeader
     ui/                      shadcn/ui-style primitives (button, card, tabs, …)
-    shared/                  Domain components (StatusBadge, RunsTable, MetricCard, …)
+    shared/                  Domain components (StatusBadge, RunsTable, MetricCard, SeverityBadge, …)
   features/
     dashboard/               Dashboard screen + live activity feed
-    commands/                Command Launcher + dynamic command form
+    commands/                Command Console + dynamic command form
     runs/                    Runs History + flagship Run Details (tabs, timeline, logs)
+    fleet/                   Fleet Map (Leaflet), CSV data, scenario map bindings
     health/                  System Health screen
     configuration/           Configuration screen
+    scenarios/               Scenario Runner (catalog, details, controls, step list)
+    events/                  Live Event Stream panel + page
+    timeline/                Timeline/Replay (pipeline stepper + step list)
+    architecture/            Explain Architecture (runtime/deployment/failure diagrams)
+    failure-modes/           Failure Modes cards
+    command-palette/         Ctrl/Cmd+K palette + action registry
+  demo/                      Scenario data, architecture data, failure-mode data
+    scenarios/               The 9 sanitized scenario definitions
+    architecture/            Static architecture node/edge + deployment-unit data
+    failure-modes/           Static failure-mode reference data
   services/                  Mock REST + SSE layer (the future FastAPI seam)
   hooks/                     TanStack Query hooks + SSE consumption hooks
-  models/                    Strict shared TypeScript models
-  store/                     Zustand UI store (preferences, filters, sidebar)
+  models/                    Strict shared TypeScript models (incl. Scenario, EventMessage, ArchitectureNode/Edge, FailureMode)
+  store/                     Zustand stores — uiStore (preferences/filters) + demoStore (scenario player)
   lib/                       Utilities (cn, formatting, id generation)
 ```
 

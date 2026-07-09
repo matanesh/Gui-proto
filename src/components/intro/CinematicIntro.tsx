@@ -71,7 +71,6 @@ export function CinematicIntro({ forceShow = false }: { forceShow?: boolean }) {
     }
     const timer = setTimeout(() => setPhase("leaving"), holdMs);
     return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- deliberately runs once per mount/phase
   }, [phase, holdMs]);
 
   useEffect(() => {
@@ -89,7 +88,6 @@ export function CinematicIntro({ forceShow = false }: { forceShow?: boolean }) {
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
 
   if (phase === "done") return null;
