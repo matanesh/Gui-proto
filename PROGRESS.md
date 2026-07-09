@@ -131,10 +131,26 @@ scripted simulation layer that sits alongside the existing mock/real API adapter
   scenario player: runScenario/pause/resume/reset/replay/setSpeed/injectFailure/
   toggleEventStream/resetDemo, global capped event log, role-keyed map overlay).
   `npm install` + `npm run typecheck` clean.
-- [ ] P4.2. Scenario Runner page (`/scenarios`) — catalog + details + controls.
-- [ ] P4.3. Live Event Stream panel (`/events` + dashboard widget).
-- [ ] P4.4. Timeline / Replay view (`/timeline`) — async flow steps, scrubber.
-- [ ] P4.5. Fleet Map scenario reactivity — role→marker binding, overlay colors, animated route.
+- [x] P4.2. Scenario Runner page (`/scenarios`) — `src/features/scenarios/*`:
+  ScenarioCard catalog, details panel (duration/components/expected outcome/map
+  effects/talking points), ScenarioControls (start/pause/reset/replay/speed
+  1x-2x-Instant/inject failure), ScenarioStepList live step-by-step preview.
+  Verified live in dev server (Happy Path runs 0→100%→Completed).
+- [x] P4.3. Live Event Stream panel — `src/features/events/{EventStreamPanel,EventStreamPage}.tsx`
+  at `/events` + embedded as a Dashboard widget. Severity/component filters,
+  click-through details dialog, correlation-id "show related events", pause/
+  resume with buffered replay (stream.disconnected/reconnected), CSS
+  keyframe animate-in for new rows (`.event-row-enter` in index.css).
+- [x] P4.4. Timeline / Replay view — `src/features/timeline/*` at `/timeline`:
+  PipelineStepper (canonical 10-stage async flow, current stage driven live
+  by the active scenario step), TimelineStepList (clickable, details drawer),
+  reuses ScenarioControls. Verified live.
+- [x] P4.5. Fleet Map scenario reactivity — `src/features/fleet/mapBindings.ts`
+  resolves scenario roles (primary/secondary/region) to real access points;
+  `markers.ts` adds overlay color+pulse per AssetStatus; `MapView.tsx` renders
+  an animated route Polyline; `FleetMapPage.tsx` shows a live scenario banner.
+  Verified live: Happy Path scenario visibly recolors/pulses the primary
+  marker and settles to completed/green.
 - [ ] P4.6. Architecture Explain Mode (`/architecture`) — runtime/deployment/failure views.
 - [ ] P4.7. Failure Modes view (`/failure-modes`) — 9 cards.
 - [ ] P4.8. Cinematic intro upgrade — starfield/HUD/ship, skip, replay, session-remember.
@@ -142,4 +158,4 @@ scripted simulation layer that sits alongside the existing mock/real API adapter
 - [ ] P4.10. Visual polish pass — nav, badges, states, responsiveness.
 - [ ] P4.11. README/presenter notes + this file, final commit.
 
-**NEXT STEP: P4.2 — build the Scenario Runner page.**
+**NEXT STEP: P4.6 — build Architecture Explain Mode.**
