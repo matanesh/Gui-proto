@@ -45,6 +45,13 @@ interface UiState {
 
   maxRenderedEvents: number;
   setMaxRenderedEvents: (value: number) => void;
+
+  /** Bumped by "Replay intro" to force-remount the cinematic intro, bypassing the session-seen gate. */
+  introReplayToken: number;
+  replayIntro: () => void;
+
+  commandPaletteOpen: boolean;
+  setCommandPaletteOpen: (open: boolean) => void;
 }
 
 export const useUiStore = create<UiState>()(
@@ -73,6 +80,12 @@ export const useUiStore = create<UiState>()(
 
       maxRenderedEvents: 500,
       setMaxRenderedEvents: (value) => set({ maxRenderedEvents: value }),
+
+      introReplayToken: 0,
+      replayIntro: () => set((s) => ({ introReplayToken: s.introReplayToken + 1 })),
+
+      commandPaletteOpen: false,
+      setCommandPaletteOpen: (open) => set({ commandPaletteOpen: open }),
     }),
     {
       name: "occ-ui-preferences",

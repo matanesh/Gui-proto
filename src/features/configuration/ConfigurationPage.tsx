@@ -1,6 +1,7 @@
-import { Info } from "lucide-react";
+import { Info, Rocket } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -34,6 +35,7 @@ export function ConfigurationPage() {
     setRefreshIntervalSec,
     maxRenderedEvents,
     setMaxRenderedEvents,
+    replayIntro,
   } = useUiStore();
 
   return (
@@ -67,6 +69,27 @@ export function ConfigurationPage() {
             <div className="space-y-1.5">
               <Label htmlFor="sse-path">SSE Endpoint Path</Label>
               <Input id="sse-path" value={MOCK_SSE_PATH} readOnly className="font-mono" />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Presentation */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Presentation</CardTitle>
+            <CardDescription>Demo-facing controls for presenters.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between py-2">
+              <div>
+                <Label>Cinematic intro</Label>
+                <p className="text-xs text-muted-foreground">
+                  Replay the entry sequence shown once per browser session.
+                </p>
+              </div>
+              <Button variant="outline" size="sm" onClick={replayIntro}>
+                <Rocket /> Replay intro
+              </Button>
             </div>
           </CardContent>
         </Card>
