@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { ListTree } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,7 +17,11 @@ export function ScenarioRunnerPage() {
   const stepIndex = useDemoStore((s) => s.stepIndex);
   const status = useDemoStore((s) => s.status);
 
-  const [selectedId, setSelectedId] = useState(scenarios[0]?.id ?? "");
+  const [searchParams] = useSearchParams();
+  const requestedId = searchParams.get("scenario");
+  const [selectedId, setSelectedId] = useState(
+    (requestedId && scenarios.some((s) => s.id === requestedId) ? requestedId : scenarios[0]?.id) ?? "",
+  );
   const selected = useMemo(
     () => scenarios.find((s) => s.id === selectedId) ?? scenarios[0],
     [scenarios, selectedId],

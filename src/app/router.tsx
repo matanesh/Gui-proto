@@ -32,6 +32,12 @@ const EventStreamPage = lazy(() =>
 const TimelinePage = lazy(() =>
   import("@/features/timeline/TimelinePage").then((m) => ({ default: m.TimelinePage })),
 );
+const ArchitecturePage = lazy(() =>
+  import("@/features/architecture/ArchitecturePage").then((m) => ({ default: m.ArchitecturePage })),
+);
+const FailureModesPage = lazy(() =>
+  import("@/features/failure-modes/FailureModesPage").then((m) => ({ default: m.FailureModesPage })),
+);
 const ConfigurationPage = lazy(() =>
   import("@/features/configuration/ConfigurationPage").then((m) => ({ default: m.ConfigurationPage })),
 );
@@ -51,6 +57,8 @@ export const router = createBrowserRouter([
       { path: "/scenarios", element: <ScenarioRunnerPage /> },
       { path: "/events", element: <EventStreamPage /> },
       { path: "/timeline", element: <TimelinePage /> },
+      { path: "/architecture", element: <ArchitecturePage /> },
+      { path: "/failure-modes", element: <FailureModesPage /> },
       { path: "/health", element: <SystemHealthPage /> },
       { path: "/config", element: <ConfigurationPage /> },
       { path: "*", element: <NotFoundPage /> },
