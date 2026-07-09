@@ -1,4 +1,4 @@
-DONE
+IN PROGRESS — Phase 4
 
 # PROGRESS — Ops Command Center
 
@@ -111,3 +111,35 @@ Everything sanitized. Frontend stays mock by default; real mode via env flag. Co
 - [x] B9. (verified: tsc+lint+build clean; BFF CORS ok for :5173; adapter-shaped submit 202; real REST+SSE adapters behind VITE_API_MODE, default mock) Frontend real adapters behind the service interface: realApiClient + real EventSource stream; env VITE_API_MODE=mock|real, VITE_API_BASE_URL. Default mock (app unchanged). **NOT STARTED — needs an interactive session (tsc) to avoid breaking the working frontend build.**
 - [x] B10. Docs — backend/README.md + root README "Real backend" section. (docs/HLD.md "running the real stack" still TODO)
 - [x] B11. (verified no-broker: compileall, pip user-site install, uvicorn boot, curl REST+SSE round-trip. Docker/broker round-trip NOT run — no Docker in dev env.) Verify: venv pip install; python -m compileall backend; boot BFF no-broker; curl REST + SSE; docker compose up round-trip; npm run build after B9. **NOT DONE — python/git blocked in the autonomous session.**
+
+## Phase 4 — Ops Command Center upgrade (cinematic intro, scenarios, timeline, architecture, palette)
+
+Goal: turn the working mock+real-backend prototype into a polished, presenter-ready
+"Enterprise Operations Command Center" per the upgrade brief — cinematic intro,
+enhanced Fleet Map storytelling, Scenario Runner, Live Event Stream, Timeline/Replay,
+Architecture Explain Mode, Failure Modes view, Command Palette, visual polish, docs.
+Frontend-only; nothing here talks to the real backend — it's a self-contained
+scripted simulation layer that sits alongside the existing mock/real API adapters.
+
+- [x] P4.1. Demo engine core — `src/models/{scenario,mapEntities,architecture,failure}.ts`
+  (Scenario, ScenarioStep, EventMessage, ComponentName, MapAsset/Region/Route,
+  ArchitectureNode/Edge, FailureMode); `src/demo/scenarios/scenarios.ts` (9 sanitized
+  scenarios: Happy Path, Long Running, Progress Updates, Timeout+Retry, Partial
+  Failure, Core Unavailable, Stream Disconnect+Recovery, Duplicate Event,
+  Out-of-order Event — each with title/description/duration/components/map
+  effects/event steps/outcome/talking points); `src/store/demoStore.ts` (Zustand
+  scenario player: runScenario/pause/resume/reset/replay/setSpeed/injectFailure/
+  toggleEventStream/resetDemo, global capped event log, role-keyed map overlay).
+  `npm install` + `npm run typecheck` clean.
+- [ ] P4.2. Scenario Runner page (`/scenarios`) — catalog + details + controls.
+- [ ] P4.3. Live Event Stream panel (`/events` + dashboard widget).
+- [ ] P4.4. Timeline / Replay view (`/timeline`) — async flow steps, scrubber.
+- [ ] P4.5. Fleet Map scenario reactivity — role→marker binding, overlay colors, animated route.
+- [ ] P4.6. Architecture Explain Mode (`/architecture`) — runtime/deployment/failure views.
+- [ ] P4.7. Failure Modes view (`/failure-modes`) — 9 cards.
+- [ ] P4.8. Cinematic intro upgrade — starfield/HUD/ship, skip, replay, session-remember.
+- [ ] P4.9. Command Palette (Ctrl/Cmd+K) — navigation + demo actions.
+- [ ] P4.10. Visual polish pass — nav, badges, states, responsiveness.
+- [ ] P4.11. README/presenter notes + this file, final commit.
+
+**NEXT STEP: P4.2 — build the Scenario Runner page.**
