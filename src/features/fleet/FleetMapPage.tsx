@@ -13,14 +13,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ErrorState } from "@/components/shared/ErrorState";
+import { ScenarioStatusBadge } from "@/components/shared/ScenarioStatusBadge";
 import { MapView } from "./MapView";
 import { PcDetailsPanel } from "./PcDetailsPanel";
 import { UploadFleetDialog } from "./UploadFleetDialog";
 import { CommandConsole } from "./CommandConsole";
 import { CommandResultWindow } from "./CommandResultWindow";
 import { accessPointTarget, type ResolvedTarget } from "./targets";
+import { resolveMapBindings } from "./mapBindings";
+import { ASSET_STATUS_COLOR } from "./markers";
 import { useFleet } from "@/hooks/useFleet";
 import { useRunsList } from "@/hooks/useRuns";
+import { useDemoStore } from "@/store/demoStore";
 import { ACTIVE_TILE_SOURCE_ID, TILE_SOURCES } from "@/config/map";
 import type { AccessPointWithDevices, Run } from "@/models";
 
@@ -54,6 +58,42 @@ export function FleetMapPage() {
 
   const accessPoints = useMemo(() => fleetQuery.data?.accessPoints ?? [], [fleetQuery.data]);
   const devicesByParent = useMemo(() => fleetQuery.data?.devicesByParent ?? {}, [fleetQuery.data]);
+
+  // Scenario storytelling overlay — see Scenario Runner (/scenarios) and demoStore.
+  const mapOverlay = useDemoStore((s) => s.mapOverlay);
+  const scenarios = useDemoStore((s) => s.scenarios);
+  const activeScenarioId = useDemoStore((s) => s.activeScenarioId);
+  const scenarioStatus = useDemoStore((s) => s.status);
+  const activeScenario = useMemo(
+    () => scenarios.find((s) => s.id === activeScenarioId) ?? null,
+    [scenarios, activeScenarioId],
+  );
+
+  const bindings = useMemo(() => resolveMapBindings(accessPoints), [accessPoints]);
+
+  const overlayStatusByApId = useMemo(() => {
+    const map: Record<string, (typeof mapOverlay.assets)[string]> = {};
+    if (bindings.primary && mapOverlay.assets.primary && mapOverlay.assets.primary !== "normal") {
+      map[bindings.primary.id] = mapOverlay.assets.primary;
+    }
+    if (bindings.secondary && mapOverlay.assets.secondary && mapOverlay.assets.secondary !== "normal") {
+      map[bindings.secondary.id] = mapOverlay.assets.secondary;
+    }
+    return map;
+  }, [bindings, mapOverlay]);
+
+  const scenarioRoute = useMemo(() => {
+    const r = mapOverlay.routes["route-a"];
+    if (!r || !bindings.primary || !bindings.secondary) return null;
+    return {
+      from: [bindings.primary.lat, bindings.primary.lng] as [number, number],
+      to: [bindings.secondary.lat, bindings.secondary.lng] as [number, number],
+      progress: r.progress,
+      status: r.status,
+    };
+  }, [mapOverlay, bindings]);
+
+  const regionHealth = mapOverlay.regions["region-a"];
 
   const groups = useMemo(() => {
     const set = new Set<string>();
@@ -147,6 +187,41 @@ export function FleetMapPage() {
         </div>
       </div>
 
+      {/* Scenario storytelling overlay */}
+      {activeScenario && scenarioStatus !== "idle" && (
+        <Card className="mb-4 flex flex-wrap items-center gap-4 border-primary/20 bg-primary/5 p-3 text-sm">
+          <span className="font-medium">{activeScenario.title}</span>
+          <ScenarioStatusBadge status={scenarioStatus} />
+          {bindings.primary && mapOverlay.assets.primary && (
+            <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <span
+                className="h-2.5 w-2.5 rounded-full"
+                style={{ background: ASSET_STATUS_COLOR[mapOverlay.assets.primary] ?? "#64748b" }}
+              />
+              Primary: {bindings.primary.name} ({mapOverlay.assets.primary})
+            </span>
+          )}
+          {bindings.secondary && mapOverlay.assets.secondary && (
+            <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <span
+                className="h-2.5 w-2.5 rounded-full"
+                style={{ background: ASSET_STATUS_COLOR[mapOverlay.assets.secondary] ?? "#64748b" }}
+              />
+              Secondary: {bindings.secondary.name} ({mapOverlay.assets.secondary})
+            </span>
+          )}
+          {regionHealth && bindings.region && (
+            <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <span
+                className="h-2.5 w-2.5 rounded-full"
+                style={{ background: ASSET_STATUS_COLOR[regionHealth] ?? "#64748b" }}
+              />
+              Region {bindings.region.group}: {regionHealth}
+            </span>
+          )}
+        </Card>
+      )}
+
       {/* Command console */}
       <Card className="mb-4 p-3">
         <CommandConsole
@@ -176,6 +251,8 @@ export function FleetMapPage() {
                 expandedCoverage={expandedCoverage}
                 onSelect={setSelectedId}
                 onToggleCoverage={toggleCoverage}
+                overlayStatusByApId={overlayStatusByApId}
+                route={scenarioRoute}
               />
             )}
           </Card>

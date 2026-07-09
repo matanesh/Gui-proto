@@ -1,7 +1,7 @@
 import { Fragment, useEffect } from "react";
 import "leaflet/dist/leaflet.css";
-import { MapContainer, Marker, Polygon, TileLayer, Tooltip, useMap } from "react-leaflet";
-import type { AccessPoint, Run } from "@/models";
+import { MapContainer, Marker, Polygon, Polyline, TileLayer, Tooltip, useMap } from "react-leaflet";
+import type { AccessPoint, AssetStatus, Run } from "@/models";
 import { hasCoverage } from "@/models";
 import {
   ACTIVE_TILE_SOURCE_ID,
@@ -9,8 +9,15 @@ import {
   MAP_DEFAULT_ZOOM,
   TILE_SOURCES,
 } from "@/config/map";
-import { boundsOf, coveragePolygon } from "./geo";
-import { isActiveRun, makeMarkerIcon, markerColor } from "./markers";
+import { boundsOf, coveragePolygon, interpolate } from "./geo";
+import { ASSET_STATUS_COLOR, isActiveRun, isPulsingAssetStatus, makeMarkerIcon, markerColor } from "./markers";
+
+export interface ScenarioRouteOverlay {
+  from: [number, number];
+  to: [number, number];
+  progress: number;
+  status: AssetStatus;
+}
 
 interface MapViewProps {
   /** Markers to render (already filtered). */
@@ -23,6 +30,10 @@ interface MapViewProps {
   expandedCoverage: Set<string>;
   onSelect: (id: string) => void;
   onToggleCoverage: (id: string) => void;
+  /** Scenario-driven marker color overrides, keyed by access-point id. */
+  overlayStatusByApId?: Record<string, AssetStatus>;
+  /** A scenario-driven animated route between two resolved markers, if active. */
+  route?: ScenarioRouteOverlay | null;
 }
 
 function FitBounds({ points }: { points: AccessPoint[] }) {
@@ -43,8 +54,12 @@ export function MapView({
   expandedCoverage,
   onSelect,
   onToggleCoverage,
+  overlayStatusByApId,
+  route,
 }: MapViewProps) {
   const tile = TILE_SOURCES[ACTIVE_TILE_SOURCE_ID];
+  const routeHead = route ? interpolate(route.from, route.to, route.progress / 100) : null;
+  const routeColor = route ? ASSET_STATUS_COLOR[route.status] ?? "#3b82f6" : "#3b82f6";
 
   return (
     <MapContainer
@@ -62,10 +77,22 @@ export function MapView({
       />
       <FitBounds points={allPoints} />
 
+      {route && (
+        <>
+          <Polyline positions={[route.from, route.to]} pathOptions={{ color: routeColor, weight: 2, opacity: 0.35, dashArray: "4 6" }} />
+          {routeHead && (
+            <Polyline positions={[route.from, routeHead]} pathOptions={{ color: routeColor, weight: 3, opacity: 0.9 }} />
+          )}
+        </>
+      )}
+
       {points.map((ap) => {
         const latest = latestByPc[ap.id];
-        const color = markerColor(ap, latest);
+        const overlayStatus = overlayStatusByApId?.[ap.id];
+        const overlayColor = overlayStatus ? ASSET_STATUS_COLOR[overlayStatus] : undefined;
+        const color = overlayColor ?? markerColor(ap, latest);
         const selected = ap.id === selectedId;
+        const active = isPulsingAssetStatus(overlayStatus) || (!overlayStatus && isActiveRun(latest));
 
         const coverageShown = expandedCoverage.has(ap.id) && hasCoverage(ap);
 
@@ -84,7 +111,7 @@ export function MapView({
             )}
             <Marker
               position={[ap.lat, ap.lng]}
-              icon={makeMarkerIcon(color, { selected, active: isActiveRun(latest) })}
+              icon={makeMarkerIcon(color, { selected, active })}
               eventHandlers={{
                 click: () => onSelect(ap.id),
                 dblclick: () => onToggleCoverage(ap.id),
