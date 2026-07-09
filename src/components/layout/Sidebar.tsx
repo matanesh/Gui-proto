@@ -6,6 +6,7 @@ import {
   Map,
   PanelLeftClose,
   PanelLeftOpen,
+  PlayCircle,
   Settings,
   TerminalSquare,
 } from "lucide-react";
@@ -19,6 +20,7 @@ const NAV_ITEMS = [
   { to: "/commands", label: "Commands", icon: TerminalSquare, end: false },
   { to: "/runs", label: "Runs", icon: ListChecks, end: false },
   { to: "/map", label: "Fleet Map", icon: Map, end: false },
+  { to: "/scenarios", label: "Scenarios", icon: PlayCircle, end: false },
   { to: "/health", label: "System Health", icon: Activity, end: false },
   { to: "/config", label: "Configuration", icon: Settings, end: false },
 ] as const;
