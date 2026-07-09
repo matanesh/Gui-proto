@@ -52,6 +52,9 @@ interface UiState {
 
   commandPaletteOpen: boolean;
   setCommandPaletteOpen: (open: boolean) => void;
+
+  assistantOpen: boolean;
+  setAssistantOpen: (open: boolean) => void;
 }
 
 export const useUiStore = create<UiState>()(
@@ -86,6 +89,9 @@ export const useUiStore = create<UiState>()(
 
       commandPaletteOpen: false,
       setCommandPaletteOpen: (open) => set({ commandPaletteOpen: open }),
+
+      assistantOpen: false,
+      setAssistantOpen: (open) => set({ assistantOpen: open }),
     }),
     {
       name: "occ-ui-preferences",

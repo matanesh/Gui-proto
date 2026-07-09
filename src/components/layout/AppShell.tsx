@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { Outlet } from "react-router-dom";
 import { Loader2 } from "lucide-react";
+import { FloatingAssistant } from "@/features/assistant/FloatingAssistant";
 import { CommandPalette } from "@/features/command-palette/CommandPalette";
 import { Sidebar } from "./Sidebar";
 import { TopHeader } from "./TopHeader";
@@ -17,6 +18,7 @@ export function AppShell() {
   return (
     <div className="flex h-screen overflow-hidden">
       <CommandPalette />
+      <FloatingAssistant />
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
         <TopHeader />

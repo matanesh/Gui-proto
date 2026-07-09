@@ -189,3 +189,16 @@ scripted simulation layer that sits alongside the existing mock/real API adapter
 `backend/`, the mock REST/SSE Run lifecycle, or the real-mode adapters. If
 resuming later, there is no open next step — treat any further work as a new
 phase.
+
+## Feature: AI System Guide (added after Phase 4)
+- [x] Floating `AI Guide` button mounted globally in the app shell.
+- [x] Chat-style assistant panel answers from a local sanitized knowledge base for now:
+  runbook, production preview, scenarios, REST/SSE architecture, real FastAPI backend mode,
+  logs/events, Fleet Map, and failure modes.
+- [x] Answers include source chips and follow-up question suggestions; the UI copy explicitly frames this
+  as ready for future logs/docs/RAG/LLM integration.
+- [x] Added command-palette action `Open AI system guide`.
+- Files: `src/features/assistant/*`, `src/store/uiStore.ts`, `src/components/layout/AppShell.tsx`,
+  `src/features/command-palette/actions.ts`.
+- Verification: `npx --yes tsx src/features/assistant/assistantAnswer.test.ts`, `npm run lint`,
+  `npm run typecheck`, `npm run build`, browser smoke test on static `dist/` with a real question.

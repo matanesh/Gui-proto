@@ -13,6 +13,7 @@ import {
   Radio,
   Repeat,
   RotateCcw,
+  Sparkles,
   Rocket,
   Settings,
   ShieldAlert,
@@ -78,6 +79,14 @@ export const PALETTE_ACTIONS: PaletteAction[] = [
     group: "Demo",
     icon: RotateCcw,
     run: ({ demo }) => demo.resetDemo(),
+  },
+  {
+    id: "open-ai-guide",
+    label: "Open AI system guide",
+    group: "Demo",
+    icon: Sparkles,
+    keywords: "assistant ai guide help ask questions",
+    run: ({ ui }) => ui.setAssistantOpen(true),
   },
   {
     id: "replay-intro",
