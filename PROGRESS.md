@@ -151,11 +151,18 @@ scripted simulation layer that sits alongside the existing mock/real API adapter
   an animated route Polyline; `FleetMapPage.tsx` shows a live scenario banner.
   Verified live: Happy Path scenario visibly recolors/pulses the primary
   marker and settles to completed/green.
-- [ ] P4.6. Architecture Explain Mode (`/architecture`) — runtime/deployment/failure views.
-- [ ] P4.7. Failure Modes view (`/failure-modes`) — 9 cards.
+- [x] P4.6. Architecture Explain Mode — `src/features/architecture/*` at `/architecture`:
+  Runtime Flow / Deployment View / Failure View tabs sharing one linear
+  node+edge diagram component (`ArchitectureFlowDiagram.tsx`, no external
+  graph lib); data in `src/demo/architecture/architectureData.ts`.
+- [x] P4.7. Failure Modes view — `src/features/failure-modes/FailureModesPage.tsx`
+  at `/failure-modes`, data in `src/demo/failure-modes/failureModes.ts` (9
+  cards), deep-links into Scenario Runner via `?scenario=` (ScenarioRunnerPage
+  now reads it). Verified both pages live; fixed a text-overlap bug in the
+  Failure View edge labels.
 - [ ] P4.8. Cinematic intro upgrade — starfield/HUD/ship, skip, replay, session-remember.
 - [ ] P4.9. Command Palette (Ctrl/Cmd+K) — navigation + demo actions.
 - [ ] P4.10. Visual polish pass — nav, badges, states, responsiveness.
 - [ ] P4.11. README/presenter notes + this file, final commit.
 
-**NEXT STEP: P4.6 — build Architecture Explain Mode.**
+**NEXT STEP: P4.8 — cinematic intro upgrade.**
