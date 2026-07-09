@@ -1,0 +1,77 @@
+import type { FailureMode } from "@/models";
+
+/** Sanitized failure-mode reference — see docs/FAILURE_MODES.md for the full write-up. */
+export const FAILURE_MODES: FailureMode[] = [
+  {
+    id: "sse-disconnected",
+    title: "SSE disconnected",
+    whatHappens: "The one-way event stream from the BFF to the browser drops mid-run.",
+    userVisibleBehavior: "Connection pill shows Reconnecting; the last known state is frozen, never guessed.",
+    recoveryStrategy: "Exponential backoff reconnect; resumes via Last-Event-ID and replays only the missed events.",
+    architecturalImplication: "SSE reconnect must be a first-class client concern — the server doesn't need to remember clients.",
+  },
+  {
+    id: "command-timeout",
+    title: "Command timeout",
+    whatHappens: "The Core takes longer than its expected window to make progress on a task.",
+    userVisibleBehavior: "A visible warning appears without changing the run to failed — presenter sees 'stalled, not dead'.",
+    recoveryStrategy: "Core schedules a retry (task.retry_scheduled) and resumes; UI reflects the retry explicitly.",
+    architecturalImplication: "Timeout detection lives in the Core, not the UI — the UI only ever reflects what it's told.",
+  },
+  {
+    id: "duplicate-event",
+    title: "Duplicate event",
+    whatHappens: "The broker redelivers the same event (at-least-once delivery is normal, not a bug).",
+    userVisibleBehavior: "The raw stream shows both deliveries; derived UI state (progress, status) changes only once.",
+    recoveryStrategy: "Client deduplicates using eventId before applying state changes.",
+    architecturalImplication: "Idempotency is a client responsibility — brokers are allowed to redeliver.",
+  },
+  {
+    id: "out-of-order-event",
+    title: "Out-of-order event",
+    whatHappens: "Network jitter delivers a later-sequence event before an earlier one.",
+    userVisibleBehavior: "Rendered progress only ever moves forward, even though wire order was jumbled.",
+    recoveryStrategy: "Client reorders using the monotonic sequence number, not arrival time.",
+    architecturalImplication: "Every event needs a sequence number — timestamps alone aren't a reliable ordering key.",
+  },
+  {
+    id: "bff-unavailable",
+    title: "BFF unavailable",
+    whatHappens: "The FastAPI BFF itself is unreachable or mid-restart.",
+    userVisibleBehavior: "REST calls fail fast with a clear error; SSE connections drop and show disconnected.",
+    recoveryStrategy: "Client retries REST with backoff; SSE reconnects once the BFF is back, then resyncs via snapshot.",
+    architecturalImplication: "The BFF should stay stateless enough that a restart is just a longer disconnect, not data loss.",
+  },
+  {
+    id: "core-processing-failure",
+    title: "Core processing failure",
+    whatHappens: "The Core Service hits an unrecoverable error executing the task.",
+    userVisibleBehavior: "Run transitions to a clear failed state with the failure reason — never a silent hang.",
+    recoveryStrategy: "Failure is reported as a terminal task.failed event; presenter can retry the command from the UI.",
+    architecturalImplication: "Failure is a normal, first-class terminal state — not an exception the UI has to guess about.",
+  },
+  {
+    id: "stale-status",
+    title: "Stale status",
+    whatHappens: "The UI's last-known run status is older than expected (e.g. after a long tab suspend).",
+    userVisibleBehavior: "UI marks the status as potentially stale rather than presenting it with full confidence.",
+    recoveryStrategy: "A snapshot fetch (GET run by id) reconciles state on reconnect or on demand.",
+    architecturalImplication: "The snapshot endpoint is the source of truth; the event stream is an optimization on top of it.",
+  },
+  {
+    id: "retry-exhausted",
+    title: "Retry exhausted",
+    whatHappens: "The Core retries a task the configured number of times and still fails.",
+    userVisibleBehavior: "Run ends in failed with a retry count shown, not an infinite spinner.",
+    recoveryStrategy: "Terminal failure with retry history preserved in the run's event log for post-mortem.",
+    architecturalImplication: "Retry budgets belong to the Core's execution policy, not to client-side guesswork.",
+  },
+  {
+    id: "partial-success",
+    title: "Partial success",
+    whatHappens: "A multi-target task succeeds for some targets and fails for others.",
+    userVisibleBehavior: "Run shows a distinct partial-success outcome — never collapsed into a misleading succeeded or failed.",
+    recoveryStrategy: "Per-target results are preserved in the event log so a presenter (or operator) can see exactly what needs re-running.",
+    architecturalImplication: "The run-status model needs more than a boolean — partial outcomes must be representable end to end.",
+  },
+];

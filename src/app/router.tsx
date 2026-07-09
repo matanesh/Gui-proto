@@ -23,6 +23,21 @@ const SystemHealthPage = lazy(() =>
 const FleetMapPage = lazy(() =>
   import("@/features/fleet/FleetMapPage").then((m) => ({ default: m.FleetMapPage })),
 );
+const ScenarioRunnerPage = lazy(() =>
+  import("@/features/scenarios/ScenarioRunnerPage").then((m) => ({ default: m.ScenarioRunnerPage })),
+);
+const EventStreamPage = lazy(() =>
+  import("@/features/events/EventStreamPage").then((m) => ({ default: m.EventStreamPage })),
+);
+const TimelinePage = lazy(() =>
+  import("@/features/timeline/TimelinePage").then((m) => ({ default: m.TimelinePage })),
+);
+const ArchitecturePage = lazy(() =>
+  import("@/features/architecture/ArchitecturePage").then((m) => ({ default: m.ArchitecturePage })),
+);
+const FailureModesPage = lazy(() =>
+  import("@/features/failure-modes/FailureModesPage").then((m) => ({ default: m.FailureModesPage })),
+);
 const ConfigurationPage = lazy(() =>
   import("@/features/configuration/ConfigurationPage").then((m) => ({ default: m.ConfigurationPage })),
 );
@@ -39,6 +54,11 @@ export const router = createBrowserRouter([
       { path: "/runs", element: <RunsHistoryPage /> },
       { path: "/runs/:runId", element: <RunDetailsPage /> },
       { path: "/map", element: <FleetMapPage /> },
+      { path: "/scenarios", element: <ScenarioRunnerPage /> },
+      { path: "/events", element: <EventStreamPage /> },
+      { path: "/timeline", element: <TimelinePage /> },
+      { path: "/architecture", element: <ArchitecturePage /> },
+      { path: "/failure-modes", element: <FailureModesPage /> },
       { path: "/health", element: <SystemHealthPage /> },
       { path: "/config", element: <ConfigurationPage /> },
       { path: "*", element: <NotFoundPage /> },

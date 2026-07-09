@@ -4,9 +4,14 @@ import {
   LayoutDashboard,
   ListChecks,
   Map,
+  Network,
   PanelLeftClose,
   PanelLeftOpen,
+  GitBranch,
+  PlayCircle,
+  Radio,
   Settings,
+  ShieldAlert,
   TerminalSquare,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -19,6 +24,11 @@ const NAV_ITEMS = [
   { to: "/commands", label: "Commands", icon: TerminalSquare, end: false },
   { to: "/runs", label: "Runs", icon: ListChecks, end: false },
   { to: "/map", label: "Fleet Map", icon: Map, end: false },
+  { to: "/scenarios", label: "Scenarios", icon: PlayCircle, end: false },
+  { to: "/events", label: "Event Stream", icon: Radio, end: false },
+  { to: "/timeline", label: "Timeline", icon: GitBranch, end: false },
+  { to: "/architecture", label: "Architecture", icon: Network, end: false },
+  { to: "/failure-modes", label: "Failure Modes", icon: ShieldAlert, end: false },
   { to: "/health", label: "System Health", icon: Activity, end: false },
   { to: "/config", label: "Configuration", icon: Settings, end: false },
 ] as const;

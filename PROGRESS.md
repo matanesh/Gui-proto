@@ -2,12 +2,13 @@ DONE
 
 # PROGRESS — Ops Command Center
 
-**NEXT STEP: B11 verify + commit the backend (see HANDOFF_NIGHT.md), then B9 frontend real-mode wiring — do these in an INTERACTIVE session (python/git/tsc were blocked overnight).**
+**All phases complete — see Phase 4 at the bottom for the most recent work (Ops Command Center upgrade: cinematic intro, scenario runner, live events, timeline, architecture explain mode, failure modes, command palette).**
 
 > Phases 1 & 2 (docs + mock frontend) are COMPLETE (see checklist below).
-> **Phase 3 (bottom of file)** aligns the code with the HLD: a real FastAPI BFF
-> that talks to RabbitMQ and a Python Core, with SSE. The mock frontend keeps
-> working; the real path is behind an env flag. Work Phase 3 top-to-bottom.
+> **Phase 3** aligns the code with the HLD: a real FastAPI BFF that talks to
+> RabbitMQ and a Python Core, with SSE. The mock frontend keeps working; the
+> real path is behind an env flag. **Phase 4** (bottom of file) is the
+> cinematic/scenario-storytelling upgrade layered on top — frontend-only.
 
 Rules: after each completed step, mark it `[x]`, add a note (what was done, files changed), update NEXT STEP above, and `git commit` + `git push`. Never redo completed steps. When Phase 3 passes, write `DONE` on the first line of this file.
 
@@ -111,3 +112,80 @@ Everything sanitized. Frontend stays mock by default; real mode via env flag. Co
 - [x] B9. (verified: tsc+lint+build clean; BFF CORS ok for :5173; adapter-shaped submit 202; real REST+SSE adapters behind VITE_API_MODE, default mock) Frontend real adapters behind the service interface: realApiClient + real EventSource stream; env VITE_API_MODE=mock|real, VITE_API_BASE_URL. Default mock (app unchanged). **NOT STARTED — needs an interactive session (tsc) to avoid breaking the working frontend build.**
 - [x] B10. Docs — backend/README.md + root README "Real backend" section. (docs/HLD.md "running the real stack" still TODO)
 - [x] B11. (verified no-broker: compileall, pip user-site install, uvicorn boot, curl REST+SSE round-trip. Docker/broker round-trip NOT run — no Docker in dev env.) Verify: venv pip install; python -m compileall backend; boot BFF no-broker; curl REST + SSE; docker compose up round-trip; npm run build after B9. **NOT DONE — python/git blocked in the autonomous session.**
+
+## Phase 4 — Ops Command Center upgrade (cinematic intro, scenarios, timeline, architecture, palette)
+
+Goal: turn the working mock+real-backend prototype into a polished, presenter-ready
+"Enterprise Operations Command Center" per the upgrade brief — cinematic intro,
+enhanced Fleet Map storytelling, Scenario Runner, Live Event Stream, Timeline/Replay,
+Architecture Explain Mode, Failure Modes view, Command Palette, visual polish, docs.
+Frontend-only; nothing here talks to the real backend — it's a self-contained
+scripted simulation layer that sits alongside the existing mock/real API adapters.
+
+- [x] P4.1. Demo engine core — `src/models/{scenario,mapEntities,architecture,failure}.ts`
+  (Scenario, ScenarioStep, EventMessage, ComponentName, MapAsset/Region/Route,
+  ArchitectureNode/Edge, FailureMode); `src/demo/scenarios/scenarios.ts` (9 sanitized
+  scenarios: Happy Path, Long Running, Progress Updates, Timeout+Retry, Partial
+  Failure, Core Unavailable, Stream Disconnect+Recovery, Duplicate Event,
+  Out-of-order Event — each with title/description/duration/components/map
+  effects/event steps/outcome/talking points); `src/store/demoStore.ts` (Zustand
+  scenario player: runScenario/pause/resume/reset/replay/setSpeed/injectFailure/
+  toggleEventStream/resetDemo, global capped event log, role-keyed map overlay).
+  `npm install` + `npm run typecheck` clean.
+- [x] P4.2. Scenario Runner page (`/scenarios`) — `src/features/scenarios/*`:
+  ScenarioCard catalog, details panel (duration/components/expected outcome/map
+  effects/talking points), ScenarioControls (start/pause/reset/replay/speed
+  1x-2x-Instant/inject failure), ScenarioStepList live step-by-step preview.
+  Verified live in dev server (Happy Path runs 0→100%→Completed).
+- [x] P4.3. Live Event Stream panel — `src/features/events/{EventStreamPanel,EventStreamPage}.tsx`
+  at `/events` + embedded as a Dashboard widget. Severity/component filters,
+  click-through details dialog, correlation-id "show related events", pause/
+  resume with buffered replay (stream.disconnected/reconnected), CSS
+  keyframe animate-in for new rows (`.event-row-enter` in index.css).
+- [x] P4.4. Timeline / Replay view — `src/features/timeline/*` at `/timeline`:
+  PipelineStepper (canonical 10-stage async flow, current stage driven live
+  by the active scenario step), TimelineStepList (clickable, details drawer),
+  reuses ScenarioControls. Verified live.
+- [x] P4.5. Fleet Map scenario reactivity — `src/features/fleet/mapBindings.ts`
+  resolves scenario roles (primary/secondary/region) to real access points;
+  `markers.ts` adds overlay color+pulse per AssetStatus; `MapView.tsx` renders
+  an animated route Polyline; `FleetMapPage.tsx` shows a live scenario banner.
+  Verified live: Happy Path scenario visibly recolors/pulses the primary
+  marker and settles to completed/green.
+- [x] P4.6. Architecture Explain Mode — `src/features/architecture/*` at `/architecture`:
+  Runtime Flow / Deployment View / Failure View tabs sharing one linear
+  node+edge diagram component (`ArchitectureFlowDiagram.tsx`, no external
+  graph lib); data in `src/demo/architecture/architectureData.ts`.
+- [x] P4.7. Failure Modes view — `src/features/failure-modes/FailureModesPage.tsx`
+  at `/failure-modes`, data in `src/demo/failure-modes/failureModes.ts` (9
+  cards), deep-links into Scenario Runner via `?scenario=` (ScenarioRunnerPage
+  now reads it). Verified both pages live; fixed a text-overlap bug in the
+  Failure View edge labels.
+- [x] P4.8. Cinematic intro upgrade — `src/components/intro/{CinematicIntro,Starfield,IntroErrorBoundary}.tsx`.
+  Starfield + perspective grid + ship/glow + radar sweep + staggered HUD
+  lines + progress bar, zoom/fade into the already-mounted dashboard.
+  sessionStorage-remembered, skip button + Escape, reduced-motion fallback,
+  error boundary so a failure can't block the app. "Replay intro" wired on
+  Configuration page via a new non-persisted `uiStore.introReplayToken`.
+  Verified live (full sequence, auto-transition, no-replay-on-reload, skip).
+- [x] P4.9. Command Palette — `src/features/command-palette/{CommandPalette,actions}.tsx`,
+  mounted in AppShell. Custom Dialog-based palette (no new dependency),
+  Ctrl/Cmd+K global shortcut + "Search commands" header button, filtered
+  grouped action list, arrow-key navigation, covers every route plus
+  run-selected-scenario/inject-failure/pause-resume-stream/reset-demo/
+  replay-intro/toggle-explain-mode. Verified live (open, filter, navigate).
+- [x] P4.10. Visual polish pass — "Sanitized Offline Demo" badge in
+  TopHeader; found and fixed a responsive overflow bug in TopHeader at
+  ~820px width (description/badges/search button now collapse in order
+  instead of wrapping over page content). Verified new screens at 820px
+  and 1500px.
+- [x] P4.11. README updated: cinematic intro section, new "Demo storytelling
+  layer" section explaining the scenario/event/timeline/architecture/
+  failure-modes layer is a second, independent simulation from the
+  Command Console/Runs mock REST+SSE layer, "Recommended demo flow"
+  section, folder structure updated. This file marked DONE.
+
+**Phase 4 complete.** Everything is frontend-only and additive: no changes to
+`backend/`, the mock REST/SSE Run lifecycle, or the real-mode adapters. If
+resuming later, there is no open next step — treat any further work as a new
+phase.

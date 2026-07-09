@@ -18,6 +18,7 @@ import { EmptyState } from "@/components/shared/EmptyState";
 import { ErrorState } from "@/components/shared/ErrorState";
 import { HealthIndicator, COMPONENT_LABELS } from "@/components/shared/HealthIndicator";
 import { ActivityFeed } from "./ActivityFeed";
+import { EventStreamPanel } from "@/features/events/EventStreamPanel";
 import { useRunsList } from "@/hooks/useRuns";
 import { useHealth } from "@/hooks/useHealth";
 import { useUiStore } from "@/store/uiStore";
@@ -149,6 +150,11 @@ export function DashboardPage() {
         </Card>
 
         {activityFeedEnabled && <ActivityFeed runs={runs} />}
+      </div>
+
+      {/* Scenario-driven live event stream (see Scenario Runner / demoStore) */}
+      <div className="mt-6">
+        <EventStreamPanel maxHeightClassName="max-h-72" limit={40} />
       </div>
     </div>
   );

@@ -1,5 +1,20 @@
 import L from "leaflet";
-import type { AccessPoint, Run, RunStatus } from "@/models";
+import type { AccessPoint, AssetStatus, Run, RunStatus } from "@/models";
+
+/** Scenario-overlay colors — takes precedence over command/device-status colors. */
+export const ASSET_STATUS_COLOR: Partial<Record<AssetStatus, string>> = {
+  warning: "#f59e0b",
+  degraded: "#f97316",
+  failed: "#ef4444",
+  completed: "#10b981",
+};
+
+/** Scenario overlay states that should pulse (draw attention) on the map. */
+const PULSING_ASSET_STATUSES: ReadonlySet<AssetStatus> = new Set(["warning", "degraded", "failed"]);
+
+export function isPulsingAssetStatus(status: AssetStatus | undefined): boolean {
+  return status !== undefined && PULSING_ASSET_STATUSES.has(status);
+}
 
 // Fixed hex palette for map markers (map pins read better with solid colors
 // than theme tokens). Mirrors the app status colors closely.

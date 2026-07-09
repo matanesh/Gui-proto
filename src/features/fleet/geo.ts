@@ -41,6 +41,12 @@ export function coveragePolygon(ap: AccessPoint): LatLng[] {
   return points;
 }
 
+/** Linear interpolation between two points at fraction t (0–1). Fine for short demo routes. */
+export function interpolate(from: LatLng, to: LatLng, t: number): LatLng {
+  const clamped = Math.max(0, Math.min(1, t));
+  return [from[0] + (to[0] - from[0]) * clamped, from[1] + (to[1] - from[1]) * clamped];
+}
+
 /** Bounding box [[south,west],[north,east]] covering all access points. */
 export function boundsOf(points: AccessPoint[]): [LatLng, LatLng] | null {
   if (points.length === 0) return null;
