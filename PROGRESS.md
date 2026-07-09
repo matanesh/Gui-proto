@@ -160,9 +160,15 @@ scripted simulation layer that sits alongside the existing mock/real API adapter
   cards), deep-links into Scenario Runner via `?scenario=` (ScenarioRunnerPage
   now reads it). Verified both pages live; fixed a text-overlap bug in the
   Failure View edge labels.
-- [ ] P4.8. Cinematic intro upgrade — starfield/HUD/ship, skip, replay, session-remember.
+- [x] P4.8. Cinematic intro upgrade — `src/components/intro/{CinematicIntro,Starfield,IntroErrorBoundary}.tsx`.
+  Starfield + perspective grid + ship/glow + radar sweep + staggered HUD
+  lines + progress bar, zoom/fade into the already-mounted dashboard.
+  sessionStorage-remembered, skip button + Escape, reduced-motion fallback,
+  error boundary so a failure can't block the app. "Replay intro" wired on
+  Configuration page via a new non-persisted `uiStore.introReplayToken`.
+  Verified live (full sequence, auto-transition, no-replay-on-reload, skip).
 - [ ] P4.9. Command Palette (Ctrl/Cmd+K) — navigation + demo actions.
 - [ ] P4.10. Visual polish pass — nav, badges, states, responsiveness.
 - [ ] P4.11. README/presenter notes + this file, final commit.
 
-**NEXT STEP: P4.8 — cinematic intro upgrade.**
+**NEXT STEP: P4.9 — Command Palette.**
